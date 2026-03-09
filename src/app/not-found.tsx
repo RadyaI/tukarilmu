@@ -28,7 +28,7 @@ export default function NotFound() {
         setTimeout(() => {
             Swal.fire({
                 title: 'Laporan Diterima! 🚀',
-                text: 'Makasih ya udah lapor! Admin kita yang lagi pusing revisian skripsi bakal segera benerin link ini.',
+                text: 'Makasih ya udah lapor!',
                 icon: 'success',
                 confirmButtonColor: '#4f46e5',
                 confirmButtonText: 'Sama-sama!',
@@ -82,7 +82,7 @@ export default function NotFound() {
                     </div>
 
                     <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4 tracking-tight">
-                        Waduh, halamannya bolos kelas!
+                        Waduh, halamannya hilang!
                     </h2>
 
                     <p className="text-lg text-slate-500 mb-10 leading-relaxed max-w-md mx-auto">
