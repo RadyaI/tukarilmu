@@ -1,6 +1,7 @@
 export type Purchase = {
     userId: string
-    videoId: string
+    type: "video" | "post"
+    materialId: string
     price: number
     createdAt: Date
 }

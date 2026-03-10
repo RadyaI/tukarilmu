@@ -1,10 +1,14 @@
+import { Jurusan } from "./jurusan";
+
 export type Post = {
   title: string
   description: string
+  thumbnailUrl?: string
   course: string
+  jurusan: Jurusan | string
   userId: string
   price: number
-  postUrl: string
+  content: string
   likes: number
   requestId?: string
   createdAt: Date

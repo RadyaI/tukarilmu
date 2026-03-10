@@ -1,7 +1,11 @@
+import { Jurusan } from "./jurusan";
+
 export type Video = {
   title: string
+  thumbnailUrl?: string
   description: string
   course: string
+  jurusan: Jurusan | string
   userId: string
   price: number
   videoUrl: string
