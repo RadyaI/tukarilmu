@@ -142,7 +142,7 @@ export default function Register() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-slate-700 font-medium"
-                  placeholder="Budi Santoso"
+                  placeholder="Jhon Doe"
                 />
                 <User className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
               </div>
