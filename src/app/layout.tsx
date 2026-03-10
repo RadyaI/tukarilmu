@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
+import LayoutWrapper from "@/components/layout-wrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,11 +19,9 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className={`${inter.className} bg-white text-slate-900 min-h-screen flex flex-col`}>
-        <Navbar />
-        <main className="flex-grow">
+        <LayoutWrapper>
           {children}
-        </main>
-        <Footer />
+        </LayoutWrapper>
       </body>
     </html>
   );
