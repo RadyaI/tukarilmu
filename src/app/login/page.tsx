@@ -40,7 +40,8 @@ export default function Login() {
     try {
       await loginWithGoogle();
       toast.success("Login dengan Google berhasil!");
-      router.push("/explore");
+      router.push("/");
+      // router.push("/explore");
     } catch (error: any) {
       toast.error("Gagal login dengan Google.");
     }

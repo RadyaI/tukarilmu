@@ -46,7 +46,8 @@ export default function Register() {
     try {
       await loginWithGoogle();
       toast.success("Berhasil mendaftar dengan Google!");
-      router.push("/explore");
+      router.push("/");
+      // router.push("/explore");
     } catch (error: any) {
       toast.error("Gagal mendaftar dengan Google.");
     }
