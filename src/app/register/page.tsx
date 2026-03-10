@@ -27,8 +27,8 @@ export default function Register() {
     try {
       await registerWithEmail(email, password, name);
       toast.success("Akun berhasil dibuat!");
-      router.push("/explore");
-    } catch (error: any) {
+      router.push("/");
+      // router.push("/explore");    } catch (error: any) {
       Swal.fire({
         title: 'Oops!',
         text: error.message || 'Gagal mendaftar, email mungkin sudah digunakan.',

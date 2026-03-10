@@ -21,7 +21,8 @@ export default function Login() {
     try {
       await loginWithEmail(email, password);
       toast.success("Login berhasil!");
-      router.push("/explore");
+      router.push("/");
+      // router.push("/explore");
     } catch (error: any) {
       Swal.fire({
         title: 'Oops!',
