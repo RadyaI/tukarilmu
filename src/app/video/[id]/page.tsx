@@ -192,7 +192,7 @@ export default function VideoDetail() {
 
               <h1 className="text-3xl font-extrabold text-slate-900 mb-6 leading-tight">{video.title}</h1>
 
-              <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-8">
+              <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-3">
                 <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-lg shrink-0">
                   {author?.avatar ? <img src={author.avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" /> : author?.name?.[0]?.toUpperCase() || <UserCircle className="w-6 h-6" />}
                 </div>
