@@ -21,8 +21,8 @@ export default function Login() {
     try {
       await loginWithEmail(email, password);
       toast.success("Login berhasil!");
-      router.push("/");
-      // router.push("/explore");
+      // router.push("/");
+      router.push("/explore");
     } catch (error: any) {
       Swal.fire({
         title: 'Oops!',
@@ -40,8 +40,8 @@ export default function Login() {
     try {
       await loginWithGoogle();
       toast.success("Login dengan Google berhasil!");
-      router.push("/");
-      // router.push("/explore");
+      // router.push("/");
+      router.push("/explore");
     } catch (error: any) {
       toast.error("Gagal login dengan Google.");
     }

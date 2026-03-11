@@ -27,8 +27,8 @@ export default function Register() {
     try {
       await registerWithEmail(email, password, name);
       toast.success("Akun berhasil dibuat!");
-      router.push("/");
-      // router.push("/explore");
+      // router.push("/");
+      router.push("/explore");
     } catch (error: any) {
       Swal.fire({
         title: 'Oops!',
@@ -46,8 +46,8 @@ export default function Register() {
     try {
       await loginWithGoogle();
       toast.success("Berhasil mendaftar dengan Google!");
-      router.push("/");
-      // router.push("/explore");
+      // router.push("/");
+      router.push("/explore");
     } catch (error: any) {
       toast.error("Gagal mendaftar dengan Google.");
     }

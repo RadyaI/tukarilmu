@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Search, ChevronDown, LogOut, LayoutDashboard, FileText, ShoppingBag, PlusCircle, Video, Menu, X, Shield } from "lucide-react";
 import { auth } from "../config/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -14,7 +14,10 @@ export default function Navbar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -34,6 +37,15 @@ export default function Navbar() {
     setDropdownOpen(false);
     setMobileMenuOpen(false);
     setIsAdmin(false);
+    router.push("/login");
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/explore?search=${encodeURIComponent(searchQuery)}`);
+      setMobileMenuOpen(false);
+    }
   };
 
   const isMenuMobileActive = (path: string) => {
@@ -62,14 +74,19 @@ export default function Navbar() {
             <Link href="/" className="text-2xl font-extrabold text-indigo-600 tracking-tight cursor-pointer">
               TukarIlmu.
             </Link>
-            <div className="hidden md:flex relative">
-              <input
-                type="text"
-                placeholder="Cari materi kuliah..."
-                className="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-              />
-              <Search className="absolute left-3.5 top-2.5 w-5 h-5 text-slate-400" />
-            </div>
+            
+            {/* {pathname === '/explore' && ( */}
+              <form onSubmit={handleSearch} className="hidden md:flex relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cari materi kuliah..."
+                  className="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                />
+                <Search className="absolute left-3.5 top-2.5 w-5 h-5 text-slate-400" />
+              </form>
+            {/* )} */}
           </div>
 
           <div className="hidden md:flex items-center gap-6">
@@ -107,7 +124,7 @@ export default function Navbar() {
                       >
                         <div className="p-2">
                           {isAdmin && (
-                            <Link href="/admin" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors mb-1 cursor-pointer ${pathname === "/admin" ? "bg-indigo-100 text-indigo-800 font-bold" : "text-indigo-700 bg-indigo-50 hover:bg-indigo-100 font-semibold"}`}>
+                            <Link href="/admin" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors mb-1 cursor-pointer ${pathname.startsWith("/admin") ? "bg-indigo-100 text-indigo-800 font-bold" : "text-indigo-700 bg-indigo-50 hover:bg-indigo-100 font-semibold"}`}>
                               <Shield className="w-4 h-4" /> Admin Panel
                             </Link>
                           )}
@@ -165,14 +182,19 @@ export default function Navbar() {
             className="md:hidden border-t border-slate-100 bg-white overflow-hidden"
           >
             <div className="px-4 pt-4 pb-6 space-y-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Cari materi kuliah..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-                />
-                <Search className="absolute left-3.5 top-2.5 w-5 h-5 text-slate-400" />
-              </div>
+              
+              {pathname === '/explore' && (
+                <form onSubmit={handleSearch} className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Cari materi kuliah..."
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                  />
+                  <Search className="absolute left-3.5 top-2.5 w-5 h-5 text-slate-400" />
+                </form>
+              )}
               
               <div className="flex flex-col space-y-2">
                 <Link href="/explore" className={`px-4 py-2.5 font-medium rounded-xl transition-colors cursor-pointer ${pathname === "/explore" ? "bg-indigo-50 text-indigo-700" : "text-slate-600 hover:bg-slate-50"}`} onClick={() => setMobileMenuOpen(false)}>
@@ -196,12 +218,12 @@ export default function Navbar() {
                   
                   <div className="flex flex-col space-y-1">
                     {isAdmin && (
-                      <Link href="/admin" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${pathname === "/admin" ? "bg-indigo-100 text-indigo-800 font-bold border-l-4 border-indigo-600" : "text-indigo-700 bg-indigo-50 hover:bg-indigo-100 font-semibold border-l-4 border-transparent"}`} onClick={() => setMobileMenuOpen(false)}>
+                      <Link href="/admin" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${pathname.startsWith("/admin") ? "bg-indigo-100 text-indigo-800 font-bold border-l-4 border-indigo-600" : "text-indigo-700 bg-indigo-50 hover:bg-indigo-100 font-semibold border-l-4 border-transparent"}`} onClick={() => setMobileMenuOpen(false)}>
                         <Shield className="w-5 h-5" /> Admin Panel
                       </Link>
                     )}
                     <Link href="/upload" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/upload")}`} onClick={() => setMobileMenuOpen(false)}>
-                      <Video className="w-5 h-5" /> Upload Video
+                      <Video className="w-5 h-5" /> Upload
                     </Link>
                     <Link href="/dashboard" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/dashboard")}`} onClick={() => setMobileMenuOpen(false)}>
                       <LayoutDashboard className="w-5 h-5" /> Dashboard
