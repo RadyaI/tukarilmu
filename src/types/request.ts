@@ -6,7 +6,7 @@ export type Request = {
   reward: number
   requesterId: string
   takerId: string | null
-  videoId: string | null
+  materialId: string | null
   status: RequestStatus
   deadline?: Date
   createdAt: Date

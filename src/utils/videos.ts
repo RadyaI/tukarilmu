@@ -75,3 +75,21 @@ export const updateVideoMetadata = async (id: string, videoData: Partial<Video>)
     throw new Error("Gagal memperbarui video");
   }
 };
+
+export const getAllVideosForAdmin = async (): Promise<(Video & { id: string })[]> => {
+  try {
+    const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Video & { id: string }));
+  } catch (error) {
+    return [];
+  }
+};
+
+export const deleteVideoAdmin = async (id: string): Promise<void> => {
+  try {
+    await deleteDoc(doc(db, "videos", id));
+  } catch (error) {
+    throw new Error("Gagal menghapus video");
+  }
+};

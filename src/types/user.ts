@@ -11,5 +11,6 @@ export type User = {
   provider: AuthProvider
   role: UserRole
   tag: UserTag
+  banned?: boolean
   createdAt: Date
 }

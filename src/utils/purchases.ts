@@ -1,4 +1,4 @@
-import { collection, query, where, getDocs, doc, getDoc, addDoc, serverTimestamp, updateDoc, increment } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc, addDoc, serverTimestamp, updateDoc, increment, orderBy } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { Purchase } from "../types/purchase";
 
@@ -94,5 +94,50 @@ export const incrementLike = async (type: "video" | "post", materialId: string) 
     });
   } catch (error) {
     throw new Error("Gagal menyukai materi");
+  }
+};
+
+export const getAllPurchasesForAdmin = async () => {
+  try {
+    const q = query(collection(db, "purchases"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    const purchases = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Purchase & { id: string }));
+
+    const enrichedPurchases = await Promise.all(
+      purchases.map(async (purchase) => {
+        let buyerName = "Pengguna Tidak Diketahui";
+        let buyerEmail = "-";
+        
+        if (purchase.userId) {
+          const userRef = doc(db, "users", purchase.userId);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            buyerName = userSnap.data().name || userSnap.data().email.split('@')[0];
+            buyerEmail = userSnap.data().email;
+          }
+        }
+
+        let materialTitle = "Materi Telah Dihapus";
+        
+        if (purchase.materialId) {
+          const materialRef = doc(db, purchase.type === "video" ? "videos" : "posts", purchase.materialId);
+          const materialSnap = await getDoc(materialRef);
+          if (materialSnap.exists()) {
+            materialTitle = materialSnap.data().title;
+          }
+        }
+
+        return {
+          ...purchase,
+          buyerName,
+          buyerEmail,
+          materialTitle
+        };
+      })
+    );
+
+    return enrichedPurchases;
+  } catch (error) {
+    return [];
   }
 };

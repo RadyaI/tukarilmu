@@ -75,3 +75,21 @@ export const updatePostMetadata = async (id: string, postData: Partial<Post>) =>
     throw new Error("Gagal memperbarui post");
   }
 };
+
+export const getAllPostsForAdmin = async (): Promise<(Post & { id: string })[]> => {
+  try {
+    const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post & { id: string }));
+  } catch (error) {
+    return [];
+  }
+};
+
+export const deletePostAdmin = async (id: string): Promise<void> => {
+  try {
+    await deleteDoc(doc(db, "posts", id));
+  } catch (error) {
+    throw new Error("Gagal menghapus post");
+  }
+};
