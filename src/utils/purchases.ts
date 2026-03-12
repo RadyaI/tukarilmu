@@ -1,6 +1,8 @@
-import { collection, query, where, getDocs, doc, getDoc, addDoc, serverTimestamp, updateDoc, increment, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc, addDoc, serverTimestamp, updateDoc, increment, orderBy, getAggregateFromServer, sum } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { Purchase } from "../types/purchase";
+
+const PLATFORM_FEE_PERCENTAGE = 0.10;
 
 export const getUserPurchases = async (userId: string) => {
   try {
@@ -59,13 +61,24 @@ export const checkHasPurchased = async (userId: string, materialId: string): Pro
   }
 };
 
-export const buyMaterial = async (userId: string, type: "video" | "post", materialId: string, price: number) => {
+export const buyMaterial = async (userId: string, creatorId: string, type: "video" | "post", materialId: string, price: number) => {
   try {
+    let platformFee = 0;
+    let netAmount = 0;
+
+    if (price > 0) {
+      platformFee = Math.round(price * PLATFORM_FEE_PERCENTAGE);
+      netAmount = price - platformFee;
+    }
+
     await addDoc(collection(db, "purchases"), {
       userId,
+      creatorId,
       type,
       materialId,
       price,
+      netAmount,
+      platformFee,
       createdAt: serverTimestamp()
     });
   } catch (error) {
@@ -139,5 +152,21 @@ export const getAllPurchasesForAdmin = async () => {
     return enrichedPurchases;
   } catch (error) {
     return [];
+  }
+};
+
+export const getCreatorRevenue = async (creatorId: string) => {
+  try {
+    const q = query(
+      collection(db, "purchases"), 
+      where("creatorId", "==", creatorId)
+    );
+    
+    const snapshot = await getAggregateFromServer(q, {
+      totalRevenue: sum('netAmount')
+    });
+    return snapshot.data().totalRevenue || 0;
+  } catch (error) {
+    return 0;
   }
 };

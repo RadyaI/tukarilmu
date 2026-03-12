@@ -1,7 +1,10 @@
 export type Purchase = {
-    userId: string
-    type: "video" | "post"
-    materialId: string
-    price: number
-    createdAt: Date
-}
+  userId: string;
+  creatorId: string;
+  type: "video" | "post";
+  materialId: string;
+  price: number;
+  netAmount: number;    
+  platformFee: number;  
+  createdAt: Date;
+};

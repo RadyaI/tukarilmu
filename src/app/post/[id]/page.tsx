@@ -105,7 +105,7 @@ export default function PostDetail() {
       setIsProcessingBuy(true);
       toast.loading("Memproses pembelian...", { id: "buy-toast" });
       try {
-        await buyMaterial(user.uid, "post", post.id, post.price);
+        await buyMaterial(user.uid, post.userId, "post", post.id, post.price);
         setHasPurchased(true);
         toast.success("Pembelian berhasil! Selamat belajar.", { id: "buy-toast" });
         Swal.fire({

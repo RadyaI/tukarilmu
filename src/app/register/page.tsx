@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -8,13 +8,27 @@ import { Mail, Lock, User, ArrowRight, BookOpen, Sparkles, Video, Users } from "
 import toast, { Toaster } from "react-hot-toast";
 import Swal from "sweetalert2";
 import { registerWithEmail, loginWithGoogle } from "../../utils/auth";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/config/firebase";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
   const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/explore");
+      } else {
+        setIsChecking(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
   const handleEmailRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +41,6 @@ export default function Register() {
     try {
       await registerWithEmail(email, password, name);
       toast.success("Akun berhasil dibuat!");
-      // router.push("/");
       router.push("/explore");
     } catch (error: any) {
       Swal.fire({
@@ -46,12 +59,19 @@ export default function Register() {
     try {
       await loginWithGoogle();
       toast.success("Berhasil mendaftar dengan Google!");
-      // router.push("/");
       router.push("/explore");
     } catch (error: any) {
       toast.error("Gagal mendaftar dengan Google.");
     }
   };
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden">
+        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full flex bg-white">

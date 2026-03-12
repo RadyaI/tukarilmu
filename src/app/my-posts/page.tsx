@@ -4,16 +4,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Video as VideoIcon, 
-  FileText, 
-  PlusCircle, 
-  Eye, 
-  Edit3, 
-  Trash2, 
-  Heart, 
+import {
+  Video as VideoIcon,
+  FileText,
+  PlusCircle,
+  Eye,
+  Edit3,
+  Trash2,
+  Heart,
   Tag,
-  PlayCircle
+  PlayCircle,
+  Wallet
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import Swal from "sweetalert2";
@@ -21,6 +22,7 @@ import { auth } from "../../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { getUserVideos, deleteVideo } from "../../utils/videos";
 import { getUserPosts, deletePost } from "../../utils/posts";
+import { getCreatorRevenue } from "../../utils/purchases";
 import { Video } from "../../types/video";
 import { Post } from "../../types/post";
 
@@ -31,9 +33,10 @@ export default function MyPostsPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>("video");
-  
+
   const [videos, setVideos] = useState<(Video & { id: string })[]>([]);
   const [posts, setPosts] = useState<(Post & { id: string })[]>([]);
+  const [revenue, setRevenue] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -49,17 +52,19 @@ export default function MyPostsPage() {
 
   const loadData = async (uid: string) => {
     setLoading(true);
-    const [userVids, userPosts] = await Promise.all([
+    const [userVids, userPosts, userRevenue] = await Promise.all([
       getUserVideos(uid),
-      getUserPosts(uid)
+      getUserPosts(uid),
+      getCreatorRevenue(uid)
     ]);
     setVideos(userVids);
     setPosts(userPosts);
+    setRevenue(userRevenue);
     setLoading(false);
   };
 
   const formatPrice = (price: number) => {
-    return price === 0 ? "Gratis" : new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
+    return price === 0 ? "Rp.0" : new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
   };
 
   const handleDelete = async (id: string, type: TabType) => {
@@ -124,21 +129,29 @@ export default function MyPostsPage() {
           </Link>
         </div>
 
+        <div className="bg-white/80 backdrop-blur-md p-6 sm:p-8 w-fit rounded-[2rem] shadow-sm border border-white mb-8 inline-flex items-center gap-6">
+          <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 shrink-0">
+            <Wallet className="w-8 h-8" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-slate-500 mb-1">Total Pendapatan Bersih</p>
+            <h2 className="text-3xl font-extrabold text-slate-900">{formatPrice(revenue)}</h2>
+          </div>
+        </div>
+
         <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-sm border border-white p-6 sm:p-8">
           <div className="flex p-1 bg-slate-100 rounded-2xl mb-8 max-w-md mx-auto md:mx-0">
             <button
               onClick={() => setActiveTab("video")}
-              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                activeTab === "video" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
-              }`}
+              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${activeTab === "video" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                }`}
             >
               <VideoIcon className="w-4 h-4" /> Video ({videos.length})
             </button>
             <button
               onClick={() => setActiveTab("post")}
-              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                activeTab === "post" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
-              }`}
+              className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${activeTab === "post" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                }`}
             >
               <FileText className="w-4 h-4" /> Post ({posts.length})
             </button>
@@ -152,13 +165,13 @@ export default function MyPostsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               <AnimatePresence mode="popLayout">
                 {currentData.length > 0 ? currentData.map((item) => (
-                  <motion.div 
+                  <motion.div
                     layout
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.2 }}
-                    key={item.id} 
+                    key={item.id}
                     className="bg-white rounded-[1.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col"
                   >
                     <div className={`w-full h-44 flex items-center justify-center relative ${activeTab === 'video' ? 'bg-indigo-50/50' : 'bg-fuchsia-50/50'}`}>
@@ -183,7 +196,7 @@ export default function MyPostsPage() {
                         <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" /> {item.likes}
                       </div>
                     </div>
-                    
+
                     <div className="p-5 flex-1 flex flex-col">
                       <div className="flex justify-between items-start mb-3">
                         <span className="text-xs font-bold px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg flex items-center gap-1">
@@ -193,25 +206,25 @@ export default function MyPostsPage() {
                           {formatPrice(item.price)}
                         </span>
                       </div>
-                      
+
                       <h3 className="font-bold text-lg text-slate-900 mb-2 line-clamp-2">{item.title}</h3>
-                      
+
                       <div className="mt-auto pt-5 grid grid-cols-3 gap-2">
-                        <Link 
+                        <Link
                           href={activeTab === "video" ? `/video/${item.id}` : `/post/${item.id}`}
                           className="flex flex-col items-center justify-center py-2.5 bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 rounded-xl transition-colors cursor-pointer group"
                         >
                           <Eye className="w-4 h-4 mb-1 group-hover:scale-110 transition-transform" />
                           <span className="text-[10px] font-bold">View</span>
                         </Link>
-                        <Link 
+                        <Link
                           href={`/edit/${activeTab}/${item.id}`}
                           className="flex flex-col items-center justify-center py-2.5 bg-slate-50 hover:bg-amber-50 text-slate-600 hover:text-amber-600 rounded-xl transition-colors cursor-pointer group"
                         >
                           <Edit3 className="w-4 h-4 mb-1 group-hover:scale-110 transition-transform" />
                           <span className="text-[10px] font-bold">Edit</span>
                         </Link>
-                        <button 
+                        <button
                           onClick={() => handleDelete(item.id, activeTab)}
                           className="flex flex-col items-center justify-center py-2.5 bg-slate-50 hover:bg-red-50 text-slate-600 hover:text-red-600 rounded-xl transition-colors cursor-pointer group"
                         >
@@ -222,7 +235,7 @@ export default function MyPostsPage() {
                     </div>
                   </motion.div>
                 )) : (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                     className="col-span-full text-center py-16 px-4 border-2 border-dashed border-slate-200 rounded-3xl"
                   >

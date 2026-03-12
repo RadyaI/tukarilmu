@@ -103,7 +103,7 @@ export default function VideoDetail() {
       setIsProcessingBuy(true);
       toast.loading("Memproses pembelian...", { id: "buy-toast" });
       try {
-        await buyMaterial(user.uid, "video", video.id, video.price);
+        await buyMaterial(user.uid, video.userId, "video", video.id, video.price);
         setHasPurchased(true);
         toast.success("Pembelian berhasil! Selamat belajar.", { id: "buy-toast" });
         Swal.fire({
