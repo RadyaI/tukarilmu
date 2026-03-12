@@ -1,4 +1,4 @@
-import { collection, query, orderBy, limit, getDocs, doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore";
+import { collection, query, where, orderBy, limit, getDocs, doc, addDoc, serverTimestamp, Timestamp, deleteDoc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { Request, RequestStatus } from "../types/request";
 
@@ -9,6 +9,34 @@ export const getPreviewRequests = async (): Promise<any[]> => {
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     return [];
+  }
+};
+
+export const getRequestById = async (id: string) => {
+  try {
+    const docRef = doc(db, "requests", id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) return null;
+
+    const reqData = docSnap.data();
+    let requesterName = "Mahasiswa";
+
+    if (reqData.requesterId) {
+      const userRef = doc(db, "users", reqData.requesterId);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        requesterName = userSnap.data().name || userSnap.data().email.split('@')[0];
+      }
+    }
+
+    return {
+      id: docSnap.id,
+      ...reqData,
+      requesterName
+    };
+  } catch (error) {
+    return null;
   }
 };
 
@@ -64,5 +92,84 @@ export const updateRequestStatus = async (id: string, status: RequestStatus): Pr
     await updateDoc(doc(db, "requests", id), { status });
   } catch (error) {
     throw new Error("Gagal mengubah status request");
+  }
+};
+
+export const getOpenRequests = async () => {
+  try {
+    const q = query(
+      collection(db, "requests"),
+      where("status", "==", "open"),
+      orderBy("createdAt", "desc")
+    );
+    const snapshot = await getDocs(q);
+    const requests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Request & { id: string }));
+
+    const enrichedRequests = await Promise.all(
+      requests.map(async (req) => {
+        let requesterName = "Mahasiswa";
+
+        if (req.requesterId) {
+          const userRef = doc(db, "users", req.requesterId);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            requesterName = userSnap.data().name || userSnap.data().email.split('@')[0];
+          }
+        }
+
+        return {
+          ...req,
+          requesterName
+        };
+      })
+    );
+
+    return enrichedRequests;
+  } catch (error) {
+    console.error("Error getOpenRequests:", error);
+    return [];
+  }
+};
+
+export const takeRequest = async (requestId: string, takerId: string) => {
+  try {
+    const requestRef = doc(db, "requests", requestId);
+    await updateDoc(requestRef, {
+      takerId: takerId,
+      status: "taken"
+    });
+    return true;
+  } catch (error) {
+    throw new Error("Gagal mengambil request ini");
+  }
+};
+
+export const createRequest = async (
+  title: string,
+  description: string,
+  reward: number,
+  requesterId: string,
+  deadlineString?: string
+) => {
+  try {
+    let deadlineDate = null;
+    if (deadlineString) {
+      deadlineDate = Timestamp.fromDate(new Date(deadlineString));
+    }
+
+    await addDoc(collection(db, "requests"), {
+      title,
+      description,
+      reward,
+      requesterId,
+      takerId: null,
+      materialId: null,
+      status: "open",
+      deadline: deadlineDate,
+      createdAt: serverTimestamp()
+    });
+    return true;
+  } catch (error) {
+    throw new Error("Gagal membuat request");
   }
 };

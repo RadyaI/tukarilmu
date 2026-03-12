@@ -1,4 +1,4 @@
-export type RequestStatus = "open" | "taken" | "failed" | "done"
+export type RequestStatus = "open" | "taken" | "submitted" | "canceled" | "done"
 
 export type Request = {
   title: string

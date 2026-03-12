@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, ChevronDown, LogOut, LayoutDashboard, FileText, ShoppingBag, PlusCircle, Video, Menu, X, Shield } from "lucide-react";
+import { Search, ChevronDown, LogOut, LayoutDashboard, FileText, ShoppingBag, PlusCircle, Video, Menu, X, Shield, LucideGitPullRequestCreateArrow } from "lucide-react";
 import { auth } from "../config/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { motion, AnimatePresence } from "framer-motion";
@@ -137,7 +137,10 @@ export default function Navbar() {
                           <Link href="/my-purchases" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${isMenuDesktopActive("/my-purchases")}`}>
                             <ShoppingBag className="w-4 h-4" /> My Purchases
                           </Link>
-                          <Link href="/create-request" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${isMenuDesktopActive("/create-request")}`}>
+                          <Link href="/my-requests" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${isMenuDesktopActive("/my-requests")}`}>
+                            <LucideGitPullRequestCreateArrow className="w-4 h-4" /> My Requests
+                          </Link>
+                          <Link href="/requests/create" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${isMenuDesktopActive("/requests/create")}`}>
                             <PlusCircle className="w-4 h-4" /> Create Request
                           </Link>
                           <div className="h-px bg-slate-100 my-2"></div>
@@ -234,7 +237,10 @@ export default function Navbar() {
                     <Link href="/my-purchases" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/my-purchases")}`} onClick={() => setMobileMenuOpen(false)}>
                       <ShoppingBag className="w-5 h-5" /> My Purchases
                     </Link>
-                    <Link href="/create-request" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/create-request")}`} onClick={() => setMobileMenuOpen(false)}>
+                    <Link href="/my-requests" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/my-requests")}`} onClick={() => setMobileMenuOpen(false)}>
+                      <ShoppingBag className="w-5 h-5" /> My Requests
+                    </Link>
+                    <Link href="/requests/create" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/requests/create")}`} onClick={() => setMobileMenuOpen(false)}>
                       <PlusCircle className="w-5 h-5" /> Create Request
                     </Link>
                     <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-xl w-full text-left transition-colors cursor-pointer border-l-4 border-transparent">
