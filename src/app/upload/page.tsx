@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { getRequestById } from "../../utils/requests";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,7 +20,7 @@ import { JURUSAN_LIST, Jurusan } from "../../types/jurusan";
 type TabType = "video" | "post";
 type PreviewType = "edit" | "preview";
 
-export default function UploadPage() {
+function UploadFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestId = searchParams.get("request");
@@ -35,7 +35,7 @@ export default function UploadPage() {
   const [course, setCourse] = useState("");
   const [jurusan, setJurusan] = useState<Jurusan | "">("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState<number>(0);
+  const [price, setPrice] = useState<number | string>("");
 
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
@@ -358,7 +358,12 @@ export default function UploadPage() {
                   required
                   value={price}
                   onChange={(e) => setPrice(Number(e.target.value))}
-                  className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium text-slate-800"
+                  disabled={!!requestId}
+                  className={`w-full px-4 py-3.5 border rounded-2xl focus:outline-none transition-all font-medium ${
+                    requestId
+                      ? "bg-slate-100 border-slate-200 cursor-not-allowed text-slate-500 font-bold"
+                      : "bg-slate-50 border-slate-200 focus:ring-2 focus:ring-indigo-500/50 text-slate-800"
+                  }`}
                   placeholder="0 untuk gratis"
                 />
                 <p className="text-xs text-slate-500 mt-2">Isi 0 jika kamu ingin membagikan materi ini secara gratis.</p>
@@ -549,5 +554,17 @@ export default function UploadPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function UploadPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+      </div>
+    }>
+      <UploadFormContent />
+    </Suspense>
   );
 }
