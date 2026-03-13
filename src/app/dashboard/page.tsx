@@ -134,7 +134,7 @@ export default function DashboardPage() {
             <Link href="/upload" className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-md hover:shadow-indigo-200 flex items-center gap-2 cursor-pointer">
               <UploadCloud className="w-5 h-5" /> Upload Materi
             </Link>
-            <Link href="/create-request" className="px-6 py-3 bg-white text-indigo-600 font-bold rounded-xl hover:bg-slate-50 transition-all shadow-sm border border-slate-200 flex items-center gap-2 cursor-pointer">
+            <Link href="/request/create" className="px-6 py-3 bg-white text-indigo-600 font-bold rounded-xl hover:bg-slate-50 transition-all shadow-sm border border-slate-200 flex items-center gap-2 cursor-pointer">
               <PlusCircle className="w-5 h-5" /> Buat Request
             </Link>
           </div>
@@ -286,7 +286,7 @@ export default function DashboardPage() {
             )) : (
               <div className="col-span-full text-center py-8 px-4 border-2 border-dashed border-slate-200 rounded-2xl">
                 <p className="text-slate-500 font-medium mb-4">Kamu belum membuat request apapun.</p>
-                <Link href="/create-request" className="inline-flex px-5 py-2.5 bg-violet-50 text-violet-600 font-bold rounded-xl hover:bg-violet-100 transition-colors cursor-pointer">
+                <Link href="/request/create" className="inline-flex px-5 py-2.5 bg-violet-50 text-violet-600 font-bold rounded-xl hover:bg-violet-100 transition-colors cursor-pointer">
                   Buat Request
                 </Link>
               </div>
