@@ -49,13 +49,25 @@ export const getUserPurchases = async (userId: string) => {
 
 export const checkHasPurchased = async (userId: string, materialId: string): Promise<boolean> => {
   try {
-    const q = query(
+    const purchaseQuery = query(
       collection(db, "purchases"),
       where("userId", "==", userId),
       where("materialId", "==", materialId)
     );
-    const snapshot = await getDocs(q);
-    return !snapshot.empty;
+    const purchaseSnapshot = await getDocs(purchaseQuery);
+    
+    if (!purchaseSnapshot.empty) {
+      return true;
+    }
+
+    const requestQuery = query(
+      collection(db, "requests"),
+      where("requesterId", "==", userId),
+      where("materialId", "==", materialId)
+    );
+    const requestSnapshot = await getDocs(requestQuery);
+    
+    return !requestSnapshot.empty;
   } catch (error) {
     return false;
   }

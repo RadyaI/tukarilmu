@@ -2,14 +2,17 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { getRequestById } from "../../utils/requests";
 import { motion, AnimatePresence } from "framer-motion";
 import { Video, FileText, UploadCloud, X, ArrowRight, Eye, Edit3, Image as ImageIcon, ChevronDown } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import Swal from "sweetalert2";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { auth } from "../../config/firebase";
+import { auth, db } from "../../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { useSearchParams } from "next/navigation";
+import { doc, updateDoc } from "firebase/firestore";
 import { addVideoMetadata } from "../../utils/videos";
 import { addPostMetadata } from "../../utils/posts";
 import { JURUSAN_LIST, Jurusan } from "../../types/jurusan";
@@ -19,24 +22,27 @@ type PreviewType = "edit" | "preview";
 
 export default function UploadPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestId = searchParams.get("request");
+
   const [user, setUser] = useState<any>(null);
   const [loadingUser, setLoadingUser] = useState(true);
-  
+
   const [activeTab, setActiveTab] = useState<TabType>("video");
   const [isUploading, setIsUploading] = useState(false);
-  
+
   const [title, setTitle] = useState("");
   const [course, setCourse] = useState("");
   const [jurusan, setJurusan] = useState<Jurusan | "">("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number>(0);
-  
+
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [postContent, setPostContent] = useState("");
   const [previewMode, setPreviewMode] = useState<PreviewType>("edit");
 
@@ -51,6 +57,19 @@ export default function UploadPage() {
     });
     return () => unsubscribe();
   }, [router]);
+
+  useEffect(() => {
+    const fetchRequestReward = async () => {
+      if (requestId) {
+        const reqData: any = await getRequestById(requestId);
+        if (reqData && reqData.reward) {
+          setPrice(reqData.reward.toString());
+        }
+      }
+    };
+
+    fetchRequestReward();
+  }, [requestId]);
 
   const checkVideoDuration = (file: File): Promise<boolean> => {
     return new Promise((resolve) => {
@@ -146,6 +165,7 @@ export default function UploadPage() {
 
     try {
       let uploadedThumbnailUrl = "";
+      let newMaterialId = "";
 
       if (thumbnailFile) {
         toast.loading("Sedang mengunggah thumbnail...", { id: "upload-toast" });
@@ -163,7 +183,7 @@ export default function UploadPage() {
         const videoUrl = await uploadToCloudinary(videoFile, "video");
 
         toast.loading("Menyimpan data materi...", { id: "upload-toast" });
-        await addVideoMetadata({
+        newMaterialId = await addVideoMetadata({
           title,
           description,
           course,
@@ -171,7 +191,8 @@ export default function UploadPage() {
           userId: user.uid,
           price: Number(price),
           videoUrl,
-          ...(uploadedThumbnailUrl && { thumbnailUrl: uploadedThumbnailUrl })
+          ...(uploadedThumbnailUrl && { thumbnailUrl: uploadedThumbnailUrl }),
+          ...(requestId && { requestId })
         });
       } else {
         if (!postContent.trim()) {
@@ -181,7 +202,7 @@ export default function UploadPage() {
         }
 
         toast.loading("Menyimpan artikel materi...", { id: "upload-toast" });
-        await addPostMetadata({
+        newMaterialId = await addPostMetadata({
           title,
           description,
           course,
@@ -189,19 +210,30 @@ export default function UploadPage() {
           userId: user.uid,
           price: Number(price),
           content: postContent,
-          ...(uploadedThumbnailUrl && { thumbnailUrl: uploadedThumbnailUrl })
+          ...(uploadedThumbnailUrl && { thumbnailUrl: uploadedThumbnailUrl }),
+          ...(requestId && { requestId })
+        });
+      }
+
+      if (requestId && newMaterialId) {
+        toast.loading("Menautkan materi dengan request...", { id: "upload-toast" });
+        const reqRef = doc(db, "requests", requestId);
+        await updateDoc(reqRef, {
+          status: "submitted",
+          materialId: newMaterialId,
+          type: activeTab
         });
       }
 
       toast.success("Materi berhasil diunggah!", { id: "upload-toast" });
       Swal.fire({
-        title: "Berhasil! 🎉",
+        title: "Berhasil!",
         text: "Materi kamu sudah tayang dan siap dipelajari mahasiswa lain.",
         icon: "success",
         confirmButtonColor: "#4f46e5",
-        customClass: { popup: "rounded-3xl", confirmButton: "rounded-full px-6 py-2 font-bold cursor-pointer" }
+        customClass: { popup: "rounded-[2rem]", confirmButton: "rounded-full px-6 py-2 font-bold cursor-pointer" }
       }).then(() => {
-        router.push("/explore");
+        router.push(requestId ? "/my-requests" : "/explore");
       });
 
     } catch (error: any) {
@@ -211,7 +243,7 @@ export default function UploadPage() {
         text: error.message || "Terjadi kesalahan saat mengunggah materi.",
         icon: "error",
         confirmButtonColor: "#4f46e5",
-        customClass: { popup: "rounded-3xl", confirmButton: "rounded-full px-6 py-2 font-bold cursor-pointer" }
+        customClass: { popup: "rounded-[2rem]", confirmButton: "rounded-full px-6 py-2 font-bold cursor-pointer" }
       });
     } finally {
       setIsUploading(false);
@@ -245,17 +277,15 @@ export default function UploadPage() {
           <div className="flex p-1 bg-slate-100 rounded-2xl mb-8">
             <button
               onClick={() => setActiveTab("video")}
-              className={`flex-1 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                activeTab === "video" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
-              }`}
+              className={`flex-1 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${activeTab === "video" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                }`}
             >
               <Video className="w-4 h-4" /> Video Penjelasan
             </button>
             <button
               onClick={() => setActiveTab("post")}
-              className={`flex-1 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                activeTab === "post" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
-              }`}
+              className={`flex-1 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${activeTab === "post" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                }`}
             >
               <FileText className="w-4 h-4" /> Teks / Blog
             </button>
@@ -274,7 +304,7 @@ export default function UploadPage() {
                   placeholder="Contoh: Kalkulus Lanjut - Integral Lipat"
                 />
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Mata Kuliah</label>
@@ -458,20 +488,20 @@ export default function UploadPage() {
                   ) : (
                     <div className="w-full min-h-[18rem] px-6 py-5 bg-white border border-slate-200 rounded-[1.5rem] overflow-y-auto">
                       {postContent ? (
-                        <ReactMarkdown 
+                        <ReactMarkdown
                           remarkPlugins={[remarkGfm]}
                           components={{
-                            h1: ({node, ...props}) => <h1 className="text-3xl font-extrabold mt-6 mb-4 text-slate-900 border-b pb-2 border-slate-100" {...props} />,
-                            h2: ({node, ...props}) => <h2 className="text-2xl font-bold mt-5 mb-3 text-slate-800" {...props} />,
-                            h3: ({node, ...props}) => <h3 className="text-xl font-bold mt-4 mb-2 text-slate-800" {...props} />,
-                            p: ({node, ...props}) => <p className="text-slate-600 leading-relaxed mb-4 text-base" {...props} />,
-                            ul: ({node, ...props}) => <ul className="list-disc list-inside text-slate-600 mb-4 space-y-1" {...props} />,
-                            ol: ({node, ...props}) => <ol className="list-decimal list-inside text-slate-600 mb-4 space-y-1" {...props} />,
-                            li: ({node, ...props}) => <li className="mb-1" {...props} />,
-                            a: ({node, ...props}) => <a className="text-indigo-600 hover:text-indigo-800 font-semibold underline decoration-indigo-300 underline-offset-2 transition-colors" {...props} />,
-                            strong: ({node, ...props}) => <strong className="font-bold text-slate-800" {...props} />,
-                            blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-indigo-400 pl-4 py-1 italic text-slate-500 bg-slate-50 rounded-r-lg my-4" {...props} />,
-                            code: ({node, inline, className, children, ...props}: any) => {
+                            h1: ({ node, ...props }) => <h1 className="text-3xl font-extrabold mt-6 mb-4 text-slate-900 border-b pb-2 border-slate-100" {...props} />,
+                            h2: ({ node, ...props }) => <h2 className="text-2xl font-bold mt-5 mb-3 text-slate-800" {...props} />,
+                            h3: ({ node, ...props }) => <h3 className="text-xl font-bold mt-4 mb-2 text-slate-800" {...props} />,
+                            p: ({ node, ...props }) => <p className="text-slate-600 leading-relaxed mb-4 text-base" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="list-disc list-inside text-slate-600 mb-4 space-y-1" {...props} />,
+                            ol: ({ node, ...props }) => <ol className="list-decimal list-inside text-slate-600 mb-4 space-y-1" {...props} />,
+                            li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                            a: ({ node, ...props }) => <a className="text-indigo-600 hover:text-indigo-800 font-semibold underline decoration-indigo-300 underline-offset-2 transition-colors" {...props} />,
+                            strong: ({ node, ...props }) => <strong className="font-bold text-slate-800" {...props} />,
+                            blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-indigo-400 pl-4 py-1 italic text-slate-500 bg-slate-50 rounded-r-lg my-4" {...props} />,
+                            code: ({ node, inline, className, children, ...props }: any) => {
                               return inline ? (
                                 <code className="bg-slate-100 text-indigo-600 px-1.5 py-0.5 rounded-md font-mono text-sm" {...props}>
                                   {children}

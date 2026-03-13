@@ -103,6 +103,7 @@ export default function RequestDetailPage() {
                 router.push("/requests");
             } catch (error) {
                 toast.error("Terjadi kesalahan, coba lagi nanti.", { id: "take-req" });
+                console.log(error)
             } finally {
                 setIsTaking(false);
             }
