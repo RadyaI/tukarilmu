@@ -219,8 +219,8 @@ function ExploreContent() {
         </div>
 
         <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] p-6 shadow-sm border border-slate-100 mb-12 sticky top-24 z-30">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="relative">
+          <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto md:overflow-visible pb-1 md:pb-0">
+            <div className="relative shrink-0 w-[70vw] sm:w-[45vw] md:w-auto">
               <select
                 value={filters.type}
                 onChange={(e) => setFilters({ ...filters, type: e.target.value })}
@@ -233,7 +233,7 @@ function ExploreContent() {
               <ChevronDown className="absolute right-4 top-4 w-5 h-5 text-slate-400 pointer-events-none" />
             </div>
 
-            <div className="relative">
+            <div className="relative shrink-0 w-[70vw] sm:w-[45vw] md:w-auto">
               <select
                 value={filters.jurusan}
                 onChange={(e) => setFilters({ ...filters, jurusan: e.target.value as any })}
@@ -245,7 +245,7 @@ function ExploreContent() {
               <ChevronDown className="absolute right-4 top-4 w-5 h-5 text-slate-400 pointer-events-none" />
             </div>
 
-            <div className="relative">
+            <div className="relative shrink-0 w-[70vw] sm:w-[45vw] md:w-auto">
               <select
                 value={filters.price}
                 onChange={(e) => setFilters({ ...filters, price: e.target.value })}
@@ -258,7 +258,7 @@ function ExploreContent() {
               <ChevronDown className="absolute right-4 top-4 w-5 h-5 text-slate-400 pointer-events-none" />
             </div>
 
-            <div className="relative">
+            <div className="relative shrink-0 w-[70vw] sm:w-[45vw] md:w-auto">
               <select
                 value={filters.sort}
                 onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
