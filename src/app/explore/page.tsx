@@ -202,13 +202,32 @@ function ExploreContent() {
     <div className="w-full relative z-10 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
 
-        <div className="mb-12 text-left md:text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 md:text-center!">
-            Eksplorasi <span className="text-indigo-500">Materi Kuliah</span>
-          </h1>
-          <p className="text-lg text-slate-600 max-w-2xl md:text-center! md:mx-auto!">
-            Temukan video penjelasan dan ringkasan materi dari mahasiswa lain. Belajar jadi lebih relate dan gampang masuk otak!
-          </p>
+        <div className="mb-4 md:mb-12 text-left md:text-center">
+
+          {/* DESKTOPP */}
+          <div className="hidden md:block">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 md:text-center! w-1/2 md:w-full">
+              Eksplorasi <span className="text-indigo-500">Materi Kuliah</span>
+            </h1>
+            <p className="text-lg text-slate-600 max-w-2xl md:text-center! md:mx-auto! w-60 md:w-full">
+              Temukan video penjelasan dan ringkasan materi dari mahasiswa lain. <span className="hidden md:block">Belajar jadi lebih relate dan gampang masuk otak!</span>
+            </p>
+          </div>
+
+          {/* MOBILE ONLY */}
+          <div className="block md:hidden">
+            <div className="flex items-center gap-4">
+              <h1 className="leading-7 text-[24px] font-semibold text-slate-900 tracking-tight flex-1">
+                Temukan video penjelasan dan ringkasan <br /> materi dari mahasiswa lain.
+              </h1>
+              <img
+                src="/images/explore/booknobg.png"
+                alt="Buku"
+                className="w-35 h-35 mr-3 shrink-0 object-contain mix-blend-multiply"
+              />
+            </div>
+          </div>
+
           {urlSearchQuery && (
             <div className="mt-6">
               <span className="font-bold text-indigo-600 bg-indigo-50 px-5 py-2.5 rounded-full border border-indigo-100 flex items-center justify-center gap-2 w-fit max-w-full break-all md:[margin-left:auto] md:[margin-right:auto]">
@@ -218,51 +237,51 @@ function ExploreContent() {
           )}
         </div>
 
-        <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] p-6 shadow-sm border border-slate-100 mb-12 sticky top-24 z-30">
+        <div className="md:bg-white/80 md:backdrop-blur-xl rounded-[2rem] md:p-6 pt-2 md:shadow-sm md:border md:border-slate-100 mb-12 sticky top-24 z-30">
           <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto md:overflow-visible pb-1 md:pb-0">
-            <div className="relative shrink-0 w-[70vw] sm:w-[45vw] md:w-auto">
+            <div className="relative shrink-0 w-[30vw] sm:w-[45vw] md:w-auto">
               <select
                 value={filters.type}
                 onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-                className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-slate-800 font-medium appearance-none cursor-pointer"
+                className="w-full pl-4 pr-10 py-2.5 bg-slate-50 border-2 border-slate-500 md:border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-slate-800 font-medium appearance-none cursor-pointer"
               >
-                <option value="all">Semua Tipe Materi</option>
+                <option value="all">Materi</option>
                 <option value="video">Hanya Video</option>
                 <option value="post">Hanya Artikel/Blog</option>
               </select>
               <ChevronDown className="absolute right-4 top-4 w-5 h-5 text-slate-400 pointer-events-none" />
             </div>
 
-            <div className="relative shrink-0 w-[70vw] sm:w-[45vw] md:w-auto">
+            <div className="relative shrink-0 w-[35vw] sm:w-[45vw] md:w-auto">
               <select
                 value={filters.jurusan}
                 onChange={(e) => setFilters({ ...filters, jurusan: e.target.value as any })}
-                className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-slate-800 font-medium appearance-none cursor-pointer"
+                className="w-full pl-4 pr-10 py-2.5 bg-slate-50 border-2 border-slate-500 md:border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-slate-800 font-medium appearance-none cursor-pointer"
               >
-                <option value="">Semua Jurusan</option>
+                <option value="">Jurusan</option>
                 {JURUSAN_LIST.map(j => <option key={j} value={j}>{j}</option>)}
               </select>
               <ChevronDown className="absolute right-4 top-4 w-5 h-5 text-slate-400 pointer-events-none" />
             </div>
 
-            <div className="relative shrink-0 w-[70vw] sm:w-[45vw] md:w-auto">
+            <div className="relative shrink-0 w-[30vw] sm:w-[45vw] md:w-auto">
               <select
                 value={filters.price}
                 onChange={(e) => setFilters({ ...filters, price: e.target.value })}
-                className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-slate-800 font-medium appearance-none cursor-pointer"
+                className="w-full pl-4 pr-10 py-2.5 bg-slate-50 border-2 border-slate-500 md:border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-slate-800 font-medium appearance-none cursor-pointer"
               >
-                <option value="all">Semua Harga</option>
+                <option value="all">Harga</option>
                 <option value="free">Hanya Gratis</option>
                 <option value="paid">Premium</option>
               </select>
               <ChevronDown className="absolute right-4 top-4 w-5 h-5 text-slate-400 pointer-events-none" />
             </div>
 
-            <div className="relative shrink-0 w-[70vw] sm:w-[45vw] md:w-auto">
+            <div className="relative shrink-0 w-[40vw] sm:w-[45vw] md:w-auto">
               <select
                 value={filters.sort}
                 onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
-                className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-slate-800 font-medium appearance-none cursor-pointer"
+                className="w-full pl-4 pr-10 py-2.5 bg-slate-50 border-2 border-slate-500 md:border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-slate-800 font-medium appearance-none cursor-pointer"
               >
                 <option value="popular">Terpopuler</option>
                 <option value="newest">Terbaru</option>
@@ -316,13 +335,13 @@ function ExploreContent() {
         ) : (
           <>
             {validFeatured && (
-              <div className="mb-16">
+              <div className="hidden md:block mb-16">
                 <div className="flex items-center gap-2 mb-6">
                   <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
                   <h2 className="text-2xl font-extrabold text-slate-900">Top of the Week 🔥</h2>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[480px]">
+                <div className="hidden md:grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[480px]">
                   <Link href={`/${featuredMaterials[0].type}/${featuredMaterials[0].id}`} className="lg:col-span-2 group cursor-pointer block relative rounded-[2.5rem] overflow-hidden h-[300px] lg:h-full shadow-sm">
                     {featuredMaterials[0].thumbnailUrl ? (
                       <img src={featuredMaterials[0].thumbnailUrl} alt={featuredMaterials[0].title} className="w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-700" />
@@ -379,7 +398,7 @@ function ExploreContent() {
             )}
 
             {validFeatured && (
-              <div className="flex items-center gap-2 mb-6 mt-12">
+              <div className="hidden md:flex items-center gap-2 mb-6">
                 <h2 className="text-2xl font-extrabold text-slate-900">Jelajahi Semua Materi</h2>
               </div>
             )}
@@ -427,21 +446,23 @@ function ExploreContent() {
       </div>
 
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {BACKGROUND_SCRIBBLES.map((scribble, idx) => (
-          <img
-            key={`scribble-${idx}`}
-            src={scribble.src}
-            alt=""
-            className="absolute drop-shadow-sm mix-blend-multiply"
-            style={{
-              top: scribble.top,
-              left: scribble.left,
-              width: scribble.width,
-              opacity: scribble.opacity,
-              transform: `rotate(${scribble.rotate})`
-            }}
-          />
-        ))}
+        <span className="hidden md:block">
+          {BACKGROUND_SCRIBBLES.map((scribble, idx) => (
+            <img
+              key={`scribble-${idx}`}
+              src={scribble.src}
+              alt=""
+              className="absolute drop-shadow-sm mix-blend-multiply"
+              style={{
+                top: scribble.top,
+                left: scribble.left,
+                width: scribble.width,
+                opacity: scribble.opacity,
+                transform: `rotate(${scribble.rotate})`
+              }}
+            />
+          ))}
+        </span>
 
         {BACKGROUND_FORMULAS.map((item, idx) => (
           <motion.div
