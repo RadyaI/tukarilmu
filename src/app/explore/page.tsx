@@ -4,8 +4,8 @@ import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  PlayCircle, FileText, Star, 
+import {
+  PlayCircle, FileText, Star,
   Tag, GraduationCap, X, ChevronDown, Sparkles, PlusCircle, Heart, Search
 } from "lucide-react";
 import katex from "katex";
@@ -202,16 +202,16 @@ function ExploreContent() {
     <div className="w-full relative z-10 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
 
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+        <div className="mb-12 text-left md:text-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 md:text-center!">
             Eksplorasi <span className="text-indigo-500">Materi Kuliah</span>
           </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-600 max-w-2xl md:text-center! md:mx-auto!">
             Temukan video penjelasan dan ringkasan materi dari mahasiswa lain. Belajar jadi lebih relate dan gampang masuk otak!
           </p>
           {urlSearchQuery && (
             <div className="mt-6">
-              <span className="font-bold text-indigo-600 bg-indigo-50 px-5 py-2.5 rounded-full border border-indigo-100 flex items-center justify-center gap-2 w-fit mx-auto max-w-full break-all text-center">
+              <span className="font-bold text-indigo-600 bg-indigo-50 px-5 py-2.5 rounded-full border border-indigo-100 flex items-center justify-center gap-2 w-fit max-w-full break-all md:[margin-left:auto] md:[margin-right:auto]">
                 <Search className="w-4 h-4 shrink-0" /> Hasil Pencarian: "{urlSearchQuery}"
               </span>
             </div>
