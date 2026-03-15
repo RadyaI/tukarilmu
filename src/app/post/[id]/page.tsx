@@ -26,11 +26,18 @@ export default function PostDetail() {
   const [loading, setLoading] = useState(true);
   const [isProcessingBuy, setIsProcessingBuy] = useState(false);
 
+  const tagStyles: Record<string, string> = {
+    "Mahasiswa": "bg-blue-50 text-blue-700",
+    "Admin": "bg-red-50 text-red-700",
+    "Mahasiswa Super": "bg-amber-50 text-amber-700",
+    "Mahasiswa Aktif": "bg-indigo-50 text-indigo-700",
+  };
+
   useEffect(() => {
     const initData = async () => {
       const postId = params.id as string;
       const postData = await getPostById(postId);
-      
+
       if (!postData) {
         router.push("/not-found");
         return;
@@ -142,12 +149,12 @@ export default function PostDetail() {
       <Toaster position="top-center" />
       <div className="absolute top-[-10%] left-[-5%] w-[40rem] h-[40rem] bg-indigo-100/50 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-[-15%] right-[-10%] w-[45rem] h-[45rem] bg-fuchsia-100/40 rounded-full blur-[100px] pointer-events-none"></div>
-      
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         <Link href="/explore" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors font-medium mb-10 cursor-pointer">
           <ArrowLeft className="w-4 h-4" /> Kembali ke Explore
         </Link>
-        
+
         {post.thumbnailUrl && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full aspect-[21/9] bg-slate-200 rounded-[2rem] overflow-hidden mb-10 shadow-lg">
             <img src={post.thumbnailUrl} alt={post.title} className="w-full h-full object-cover" />
@@ -181,13 +188,13 @@ export default function PostDetail() {
               </div>
               <div>
                 <p className="font-bold text-slate-900 text-lg">{author?.name || "Kreator"}</p>
-                <p className="text-sm text-slate-500 flex items-center gap-1.5">
+                <p className={`w-fit p-2 rounded-lg text-xs ${tagStyles[author?.tag || "Mahasiswa"] ?? "bg-fuchsia-50 text-fuchsia-700"} flex items-center gap-1`}>
                   {author?.role === 'admin' ? <CheckCircle2 className="w-4 h-4 text-indigo-500" /> : null}
                   {author?.tag || "Mahasiswa"}
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <button onClick={handleLike} disabled={isLiked} className={`px-4 py-2.5 font-bold text-sm rounded-xl transition-all border flex items-center gap-2 cursor-pointer ${isLiked ? 'bg-red-50 text-red-500 border-red-100' : 'bg-white text-slate-600 border-slate-200 hover:bg-red-50 hover:text-red-500 hover:border-red-200 shadow-sm'}`}>
                 <Heart className={`w-4 h-4 ${isLiked ? 'fill-red-500' : ''}`} /> {post.likes}
@@ -200,20 +207,20 @@ export default function PostDetail() {
 
           <div className="relative">
             <div className={`prose prose-slate prose-indigo max-w-none ${!canRead ? 'max-h-96 overflow-hidden' : ''}`} style={!canRead ? { maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)' } : {}}>
-              <ReactMarkdown 
+              <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  h1: ({node, ...props}) => <h1 className="text-3xl font-extrabold mt-8 mb-4 text-slate-900 border-b pb-2 border-slate-100" {...props} />,
-                  h2: ({node, ...props}) => <h2 className="text-2xl font-bold mt-6 mb-3 text-slate-800" {...props} />,
-                  h3: ({node, ...props}) => <h3 className="text-xl font-bold mt-5 mb-2 text-slate-800" {...props} />,
-                  p: ({node, ...props}) => <p className="text-slate-600 leading-relaxed mb-5 text-lg" {...props} />,
-                  ul: ({node, ...props}) => <ul className="list-disc list-inside text-slate-600 mb-5 space-y-2 text-lg" {...props} />,
-                  ol: ({node, ...props}) => <ol className="list-decimal list-inside text-slate-600 mb-5 space-y-2 text-lg" {...props} />,
-                  li: ({node, ...props}) => <li className="mb-1" {...props} />,
-                  a: ({node, ...props}) => <a className="text-indigo-600 hover:text-indigo-800 font-semibold underline decoration-indigo-300 underline-offset-2 transition-colors" {...props} />,
-                  strong: ({node, ...props}) => <strong className="font-bold text-slate-800" {...props} />,
-                  blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-indigo-400 pl-5 py-2 italic text-slate-500 bg-indigo-50/50 rounded-r-xl my-6 text-lg" {...props} />,
-                  code: ({node, inline, className, children, ...props}: any) => inline ? <code className="bg-slate-100 text-indigo-600 px-1.5 py-0.5 rounded-md font-mono text-sm" {...props}>{children}</code> : <div className="bg-slate-900 rounded-xl p-5 overflow-x-auto mb-6 shadow-md"><code className="text-slate-50 font-mono text-sm leading-relaxed" {...props}>{children}</code></div>
+                  h1: ({ node, ...props }) => <h1 className="text-3xl font-extrabold mt-8 mb-4 text-slate-900 border-b pb-2 border-slate-100" {...props} />,
+                  h2: ({ node, ...props }) => <h2 className="text-2xl font-bold mt-6 mb-3 text-slate-800" {...props} />,
+                  h3: ({ node, ...props }) => <h3 className="text-xl font-bold mt-5 mb-2 text-slate-800" {...props} />,
+                  p: ({ node, ...props }) => <p className="text-slate-600 leading-relaxed mb-5 text-lg" {...props} />,
+                  ul: ({ node, ...props }) => <ul className="list-disc list-inside text-slate-600 mb-5 space-y-2 text-lg" {...props} />,
+                  ol: ({ node, ...props }) => <ol className="list-decimal list-inside text-slate-600 mb-5 space-y-2 text-lg" {...props} />,
+                  li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                  a: ({ node, ...props }) => <a className="text-indigo-600 hover:text-indigo-800 font-semibold underline decoration-indigo-300 underline-offset-2 transition-colors" {...props} />,
+                  strong: ({ node, ...props }) => <strong className="font-bold text-slate-800" {...props} />,
+                  blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-indigo-400 pl-5 py-2 italic text-slate-500 bg-indigo-50/50 rounded-r-xl my-6 text-lg" {...props} />,
+                  code: ({ node, inline, className, children, ...props }: any) => inline ? <code className="bg-slate-100 text-indigo-600 px-1.5 py-0.5 rounded-md font-mono text-sm" {...props}>{children}</code> : <div className="bg-slate-900 rounded-xl p-5 overflow-x-auto mb-6 shadow-md"><code className="text-slate-50 font-mono text-sm leading-relaxed" {...props}>{children}</code></div>
                 }}
               >
                 {canRead ? post.content : previewContent}
@@ -228,7 +235,7 @@ export default function PostDetail() {
                   </div>
                   <h3 className="text-2xl font-bold text-slate-900 mb-2">Materi Terkunci</h3>
                   <p className="text-slate-500 mb-6">Beli artikel ini untuk membaca keseluruhan materi dan panduan lengkapnya.</p>
-                  
+
                   <div className="text-3xl font-extrabold text-slate-900 mb-6">
                     Rp {post.price.toLocaleString('id-ID')}
                   </div>

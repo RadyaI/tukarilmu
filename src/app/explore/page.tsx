@@ -199,7 +199,7 @@ function ExploreContent() {
   );
 
   return (
-    <div className="w-full relative z-10 py-12">
+    <div className="w-full relative z-10 pb-12 pt-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
 
         <div className="mb-4 md:mb-12 text-left md:text-center">
@@ -217,13 +217,13 @@ function ExploreContent() {
           {/* MOBILE ONLY */}
           <div className="block md:hidden">
             <div className="flex items-center gap-4">
-              <h1 className="leading-7 text-[24px] font-semibold text-slate-900 tracking-tight flex-1">
-                Temukan video penjelasan dan ringkasan <br /> materi dari mahasiswa lain.
+              <h1 className="leading-7 text-[20px] font-bold text-slate-900 tracking-tight flex-1">
+                Temukan video penjelasan <br /> dan ringkasan materi mahasiswa lain.
               </h1>
               <img
                 src="/images/explore/booknobg.png"
                 alt="Buku"
-                className="w-35 h-35 mr-3 shrink-0 object-contain mix-blend-multiply"
+                className="w-25 h-25 mr-3 shrink-0 object-contain mix-blend-multiply"
               />
             </div>
           </div>

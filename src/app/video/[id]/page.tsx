@@ -24,11 +24,18 @@ export default function VideoDetail() {
   const [loading, setLoading] = useState(true);
   const [isProcessingBuy, setIsProcessingBuy] = useState(false);
 
+  const tagStyles: Record<string, string> = {
+    "Mahasiswa": "bg-blue-50 text-blue-700",
+    "Admin": "bg-red-50 text-red-700",
+    "Mahasiswa Super": "bg-amber-50 text-amber-700",
+    "Mahasiswa Aktif": "bg-indigo-50 text-indigo-700",
+  };
+
   useEffect(() => {
     const initData = async () => {
       const videoId = params.id as string;
       const videoData = await getVideoById(videoId);
-      
+
       if (!videoData) {
         router.push("/not-found");
         return;
@@ -139,13 +146,13 @@ export default function VideoDetail() {
       <Toaster position="top-center" />
       <div className="absolute top-[-10%] left-[-5%] w-[40rem] h-[40rem] bg-indigo-100/50 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-[-15%] right-[-10%] w-[45rem] h-[45rem] bg-violet-100/50 rounded-full blur-[100px] pointer-events-none"></div>
-      
+
       <div className="bg-white/80 backdrop-blur-md border-b border-white shadow-sm relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Link href="/explore" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors font-medium mb-6 cursor-pointer">
             <ArrowLeft className="w-4 h-4" /> Kembali ke Explore
           </Link>
-          
+
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
             <div className="w-full lg:w-2/3">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full aspect-video bg-slate-900 rounded-[2rem] overflow-hidden relative shadow-2xl border border-slate-800">
@@ -198,7 +205,7 @@ export default function VideoDetail() {
                 </div>
                 <div>
                   <p className="font-bold text-slate-900 line-clamp-1">{author?.name || "Kreator"}</p>
-                  <p className="text-xs text-slate-500 flex items-center gap-1">
+                  <p className={`w-fit p-2 rounded-lg text-xs ${tagStyles[author?.tag || "Mahasiswa"] ?? "bg-fuchsia-50 text-fuchsia-700"} flex items-center gap-1`}>
                     {author?.role === 'admin' ? <CheckCircle2 className="w-3 h-3 text-indigo-500" /> : null}
                     {author?.tag || "Mahasiswa"}
                   </p>
@@ -221,9 +228,9 @@ export default function VideoDetail() {
                       <CheckCircle2 className="w-5 h-5" /> Materi Sudah Dibuka
                     </button>
                   )}
-                  
+
                   <div className="flex gap-3">
-                    <button 
+                    <button
                       onClick={handleLike}
                       disabled={isLiked}
                       className={`flex-1 py-3.5 font-semibold rounded-2xl transition-all border flex items-center justify-center gap-2 cursor-pointer ${isLiked ? 'bg-red-50 text-red-500 border-red-100' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-red-50 hover:text-red-500 hover:border-red-200'}`}

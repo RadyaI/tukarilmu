@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { 
-  Users, 
-  Film, 
-  FileText, 
-  CreditCard, 
-  HelpCircle, 
+import {
+  Users,
+  Film,
+  FileText,
+  CreditCard,
+  HelpCircle,
   LayoutDashboard,
   ShieldCheck,
   LogOut,
@@ -32,6 +32,13 @@ export default function AdminManageUsers() {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const tagStyles: Record<string, string> = {
+    "Mahasiswa": "bg-blue-50 text-blue-700",
+    "Admin": "bg-red-50 text-red-700",
+    "Mahasiswa Super": "bg-amber-50 text-amber-700",
+    "Mahasiswa Aktif": "bg-indigo-50 text-indigo-700",
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -117,7 +124,7 @@ export default function AdminManageUsers() {
   };
 
   const handleUpdateTag = async (userId: string, currentTag: string) => {
-    const tags = ["Mahasiswa", "Admin", "Si Ambis", "Verified Mentor", "Mahasiswa Aktif"];
+    const tags = ["Mahasiswa", "Admin", "Mahasiswa Aktif", "Mahasiswa Super"];
     const inputOptions: any = {};
     tags.forEach(t => inputOptions[t] = t);
 
@@ -167,8 +174,8 @@ export default function AdminManageUsers() {
     }
   };
 
-  const filteredUsers = users.filter(u => 
-    u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredUsers = users.filter(u =>
+    u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     u.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -193,7 +200,7 @@ export default function AdminManageUsers() {
           </Link>
           <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-wider">Admin Workspace</p>
         </div>
-        
+
         <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
           <Link href="/admin" className="flex items-center gap-3 px-4 py-3.5 text-slate-600 hover:bg-slate-50 hover:text-indigo-600 font-semibold rounded-2xl transition-colors cursor-pointer">
             <LayoutDashboard className="w-5 h-5" /> Dashboard
@@ -229,9 +236,9 @@ export default function AdminManageUsers() {
             <p className="text-slate-500">Atur akses, tag, blokir, dan kelola semua akun yang terdaftar.</p>
           </div>
           <div className="relative w-full md:w-72">
-            <input 
-              type="text" 
-              placeholder="Cari nama atau email..." 
+            <input
+              type="text"
+              placeholder="Cari nama atau email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-11 pr-4 py-3.5 bg-white/60 backdrop-blur-md border border-white shadow-sm rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium text-slate-800"
@@ -253,9 +260,9 @@ export default function AdminManageUsers() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredUsers.length > 0 ? filteredUsers.map((u, i) => (
-                  <motion.tr 
+                  <motion.tr
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                    key={u.id} 
+                    key={u.id}
                     className="hover:bg-slate-50/50 transition-colors group"
                   >
                     <td className="px-6 py-5">
@@ -284,34 +291,34 @@ export default function AdminManageUsers() {
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <span className="px-3 py-1.5 bg-fuchsia-50 text-fuchsia-700 font-bold text-xs rounded-lg inline-flex items-center gap-1.5">
+                      <span className={`px-3 py-1.5 ${tagStyles[u.tag || "Mahasiswa"] ?? "bg-fuchsia-50 text-fuchsia-700"} font-bold text-xs rounded-lg inline-flex items-center gap-1.5`}>
                         <Tag className="w-3.5 h-3.5" /> {u.tag || "Mahasiswa"}
                       </span>
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center justify-end gap-2 transition-opacity">
-                        <button 
+                        <button
                           onClick={() => handleUpdateTag(u.id, u.tag)}
                           title="Ganti Tag"
                           className="w-9 h-9 rounded-xl bg-fuchsia-50 text-fuchsia-600 hover:bg-fuchsia-600 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
                         >
                           <Tag className="w-4 h-4" />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleToggleRole(u.id, u.role)}
                           title={u.role === 'admin' ? "Jadikan Mahasiswa" : "Jadikan Admin"}
                           className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
                         >
                           {u.role === 'admin' ? <UserCheck className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleToggleBan(u.id, !!u.banned)}
                           title={u.banned ? "Buka Blokir" : "Blokir User"}
                           className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors cursor-pointer ${u.banned ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white' : 'bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white'}`}
                         >
                           <Ban className="w-4 h-4" />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDelete(u.id)}
                           title="Hapus Permanen"
                           className="w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-colors cursor-pointer"

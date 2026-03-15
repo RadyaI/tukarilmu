@@ -9,6 +9,21 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { motion, AnimatePresence } from "framer-motion";
 import { checkIsAdmin } from "../utils/auth";
 
+const mainNavItems = [
+  { label: "Explore", href: "/explore" },
+  { label: "Requests", href: "/requests" },
+  { label: "Tutor", href: "/tutors", loginOnly: true }
+];
+
+const userMenuItems = [
+  { label: "Admin Panel", href: "/admin", icon: Shield, adminOnly: true },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "My Posts", href: "/my-posts", icon: FileText },
+  { label: "My Purchases", href: "/my-purchases", icon: ShoppingBag },
+  { label: "My Requests", href: "/my-requests", icon: LucideGitPullRequestCreateArrow },
+  { label: "Create Request", href: "/requests/create", icon: PlusCircle },
+];
+
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -75,27 +90,32 @@ export default function Navbar() {
               TukarIlmu.
             </Link>
             
-            {/* {pathname === '/explore' && ( */}
-              <form onSubmit={handleSearch} className="hidden md:flex relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari materi kuliah..."
-                  className="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-                />
-                <Search className="absolute left-3.5 top-2.5 w-5 h-5 text-slate-400" />
-              </form>
-            {/* )} */}
+            <form onSubmit={handleSearch} className="hidden md:flex relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari materi kuliah..."
+                className="w-80 pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+              />
+              <Search className="absolute left-3.5 top-2.5 w-5 h-5 text-slate-400" />
+            </form>
           </div>
 
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/explore" className={`${isNavMainActive("/explore")} transition-colors cursor-pointer`}>
-              Explore
-            </Link>
-            <Link href="/requests" className={`${isNavMainActive("/requests")} transition-colors cursor-pointer`}>
-              Requests
-            </Link>
+            {mainNavItems.map((item: any) => {
+              if (item.loginOnly && !user) return null;
+              
+              return (
+                <Link 
+                  key={item.href} 
+                  href={item.href} 
+                  className={`${isNavMainActive(item.href)} transition-colors cursor-pointer`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
 
             {user ? (
               <div className="flex items-center gap-4 ml-4">
@@ -123,26 +143,23 @@ export default function Navbar() {
                         className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden"
                       >
                         <div className="p-2">
-                          {isAdmin && (
-                            <Link href="/admin" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors mb-1 cursor-pointer ${pathname.startsWith("/admin") ? "bg-indigo-100 text-indigo-800 font-bold" : "text-indigo-700 bg-indigo-50 hover:bg-indigo-100 font-semibold"}`}>
-                              <Shield className="w-4 h-4" /> Admin Panel
-                            </Link>
-                          )}
-                          <Link href="/dashboard" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${isMenuDesktopActive("/dashboard")}`}>
-                            <LayoutDashboard className="w-4 h-4" /> Dashboard
-                          </Link>
-                          <Link href="/my-posts" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${isMenuDesktopActive("/my-posts")}`}>
-                            <FileText className="w-4 h-4" /> My Posts
-                          </Link>
-                          <Link href="/my-purchases" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${isMenuDesktopActive("/my-purchases")}`}>
-                            <ShoppingBag className="w-4 h-4" /> My Purchases
-                          </Link>
-                          <Link href="/my-requests" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${isMenuDesktopActive("/my-requests")}`}>
-                            <LucideGitPullRequestCreateArrow className="w-4 h-4" /> My Requests
-                          </Link>
-                          <Link href="/requests/create" className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${isMenuDesktopActive("/requests/create")}`}>
-                            <PlusCircle className="w-4 h-4" /> Create Request
-                          </Link>
+                          {userMenuItems.map((item) => {
+                            if (item.adminOnly && !isAdmin) return null;
+                            const isActive = isMenuDesktopActive(item.href);
+                            const adminClasses = pathname.startsWith("/admin") ? "bg-indigo-100 text-indigo-800 font-bold" : "text-indigo-700 bg-indigo-50 hover:bg-indigo-100 font-semibold";
+                            
+                            return (
+                              <Link 
+                                key={item.href} 
+                                href={item.href} 
+                                className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors mb-1 cursor-pointer ${item.adminOnly ? adminClasses : isActive}`}
+                                onClick={() => setDropdownOpen(false)}
+                              >
+                                <item.icon className="w-4 h-4" /> {item.label}
+                              </Link>
+                            );
+                          })}
+                          
                           <div className="h-px bg-slate-100 my-2"></div>
                           <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl w-full text-left transition-colors cursor-pointer">
                             <LogOut className="w-4 h-4" /> Logout
@@ -185,7 +202,6 @@ export default function Navbar() {
             className="md:hidden border-t border-slate-100 bg-white overflow-hidden"
           >
             <div className="px-4 pt-4 pb-6 space-y-4">
-              
               {pathname === '/explore' && (
                 <form onSubmit={handleSearch} className="relative">
                   <input
@@ -200,12 +216,20 @@ export default function Navbar() {
               )}
               
               <div className="flex flex-col space-y-2">
-                <Link href="/explore" className={`px-4 py-2.5 font-medium rounded-xl transition-colors cursor-pointer ${pathname === "/explore" ? "bg-indigo-50 text-indigo-700" : "text-slate-600 hover:bg-slate-50"}`} onClick={() => setMobileMenuOpen(false)}>
-                  Explore
-                </Link>
-                <Link href="/requests" className={`px-4 py-2.5 font-medium rounded-xl transition-colors cursor-pointer ${pathname === "/requests" ? "bg-indigo-50 text-indigo-700" : "text-slate-600 hover:bg-slate-50"}`} onClick={() => setMobileMenuOpen(false)}>
-                  Requests
-                </Link>
+                {mainNavItems.map((item: any) => {
+                  if (item.loginOnly && !user) return null;
+
+                  return (
+                    <Link 
+                      key={item.href} 
+                      href={item.href} 
+                      className={`px-4 py-2.5 font-medium rounded-xl transition-colors cursor-pointer ${pathname === item.href ? "bg-indigo-50 text-indigo-700" : "text-slate-600 hover:bg-slate-50"}`} 
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
               </div>
 
               {user ? (
@@ -220,29 +244,27 @@ export default function Navbar() {
                   </div>
                   
                   <div className="flex flex-col space-y-1">
-                    {isAdmin && (
-                      <Link href="/admin" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${pathname.startsWith("/admin") ? "bg-indigo-100 text-indigo-800 font-bold border-l-4 border-indigo-600" : "text-indigo-700 bg-indigo-50 hover:bg-indigo-100 font-semibold border-l-4 border-transparent"}`} onClick={() => setMobileMenuOpen(false)}>
-                        <Shield className="w-5 h-5" /> Admin Panel
-                      </Link>
-                    )}
                     <Link href="/upload" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/upload")}`} onClick={() => setMobileMenuOpen(false)}>
                       <Video className="w-5 h-5" /> Upload
                     </Link>
-                    <Link href="/dashboard" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/dashboard")}`} onClick={() => setMobileMenuOpen(false)}>
-                      <LayoutDashboard className="w-5 h-5" /> Dashboard
-                    </Link>
-                    <Link href="/my-posts" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/my-posts")}`} onClick={() => setMobileMenuOpen(false)}>
-                      <FileText className="w-5 h-5" /> My Posts
-                    </Link>
-                    <Link href="/my-purchases" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/my-purchases")}`} onClick={() => setMobileMenuOpen(false)}>
-                      <ShoppingBag className="w-5 h-5" /> My Purchases
-                    </Link>
-                    <Link href="/my-requests" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/my-requests")}`} onClick={() => setMobileMenuOpen(false)}>
-                      <ShoppingBag className="w-5 h-5" /> My Requests
-                    </Link>
-                    <Link href="/requests/create" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/requests/create")}`} onClick={() => setMobileMenuOpen(false)}>
-                      <PlusCircle className="w-5 h-5" /> Create Request
-                    </Link>
+
+                    {userMenuItems.map((item) => {
+                      if (item.adminOnly && !isAdmin) return null;
+                      const adminClasses = pathname.startsWith("/admin") ? "bg-indigo-100 text-indigo-800 font-bold border-l-4 border-indigo-600" : "text-indigo-700 bg-indigo-50 hover:bg-indigo-100 font-semibold border-l-4 border-transparent";
+                      const isActive = isMenuMobileActive(item.href);
+
+                      return (
+                        <Link 
+                          key={item.href} 
+                          href={item.href} 
+                          className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${item.adminOnly ? adminClasses : isActive}`} 
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <item.icon className="w-5 h-5" /> {item.label}
+                        </Link>
+                      );
+                    })}
+
                     <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-xl w-full text-left transition-colors cursor-pointer border-l-4 border-transparent">
                       <LogOut className="w-5 h-5" /> Logout
                     </button>
