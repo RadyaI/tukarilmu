@@ -9,7 +9,7 @@ const founders = [
         name: "Haidar Hanif Wahyudi",
         role: "Chief Executive Officer",
         tag: "CEO",
-        photo: "/about/foto1.png",
+        photo: "/about/foto1.jpg",
         ig: "https://instagram.com/haidarhanif_w",
         linkedin: "https://linkedin.com/in/",
         color: "#4f46e5",
@@ -26,7 +26,7 @@ const founders = [
         name: "Muhammad Radya Iftikhar",
         role: "Chief Technology Officer",
         tag: "CTO",
-        photo: "/about/foto1.png",
+        photo: "/about/foto2.jfif",
         ig: "https://instagram.com/radyaif",
         linkedin: "https://linkedin.com/in/radyaa",
         color: "#7c3aed",
@@ -43,7 +43,7 @@ const founders = [
         name: "Anggun Oktaviana",
         role: "General Founder",
         tag: "Founder",
-        photo: "/about/foto1.png",
+        photo: "/about/foto3.webp",
         ig: "https://instagram.com/anggun_octa_",
         linkedin: "https://linkedin.com/in/",
         color: "#db2777",
@@ -419,15 +419,6 @@ export default function AboutPage() {
                         <span className={dark ? "text-white" : "text-slate-900"}>untuk Mahasiswa.</span>
                     </motion.h1>
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.3 }}
-                        className={`text-lg md:text-xl max-w-2xl mx-auto leading-relaxed ${dark ? "text-slate-400" : "text-slate-500"
-                            }`}
-                    >
-                        TukarIlmu lahir dari satu keyakinan sederhana — bahwa penjelasan terbaik datang dari orang yang baru saja melewati hal yang sama.
-                    </motion.p>
                 </div>
 
                 {/* Stats */}
@@ -462,7 +453,7 @@ export default function AboutPage() {
 
                 {/* Founders */}
                 <div className="mb-20">
-                    <motion.div
+                    {/* <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
@@ -474,7 +465,7 @@ export default function AboutPage() {
                         <p className={`text-base ${dark ? "text-slate-500" : "text-slate-400"}`}>
                             Tiga orang, satu visi — bikin belajar jadi lebih relate.
                         </p>
-                    </motion.div>
+                    </motion.div> */}
 
                     <div className="flex flex-col md:flex-row gap-8 justify-center items-stretch flex-wrap">
                         {founders.map((founder, index) => (
@@ -509,20 +500,20 @@ export default function AboutPage() {
 
                     <div className={`space-y-5 text-base md:text-lg leading-relaxed ${dark ? "text-slate-300" : "text-slate-600"}`}>
                         <p>
-                            Semuanya bermula dari frustrasi yang sama — duduk di kelas, dengerin dosen, tapi masih aja bingung. Cari di YouTube? Kebanyakan bahasa Inggris atau terlalu umum. Minta tolong teman? Nggak semua orang punya waktu.
+                            Semuanya bermula dari frustrasi yang sama, duduk di kelas, dengerin dosen, tapi masih aja bingung. Cari di YouTube? Kebanyakan bahasa Inggris atau terlalu umum. Minta tolong teman? Nggak semua orang punya waktu.
                         </p>
                         <p>
-                            TukarIlmu hadir sebagai jawaban: platform di mana mahasiswa bisa berbagi penjelasan materi kuliah dalam bahasa yang lebih <em>relate</em> — karena yang jelasin juga baru ngerasain hal yang sama.
+                            Dari situlah kami menciptakan platform TukarIlmu di mana mahasiswa bisa berbagi penjelasan materi kuliah dalam bahasa yang lebih <em>relate</em>, karena yang jelasin juga baru ngerasain hal yang sama.
                         </p>
                         <p>
-                            Tim kecil kami percaya bahwa ilmu terbaik adalah ilmu yang dibagikan. Dan ketika kamu bantu orang lain paham, kamu juga makin paham.
+                            Tim kecil kami percaya bahwa <span className="bg-black text-white px-2">ilmu terbaik adalah ilmu yang dibagikan</span>. Dan ketika kamu bantu orang lain paham, kamu juga makin paham.
                         </p>
                     </div>
 
                     {/* timeline dots */}
-                    <div className="mt-12 flex flex-col sm:flex-row gap-6">
+                    {/* <div className="mt-12 flex flex-col sm:flex-row gap-6">
                         {[
-                            { year: "2024", event: "Ide pertama muncul di kelas yang bikin pusing" },
+                            { year: "2025", event: "Ide pertama muncul di kelas yang bikin pusing" },
                             { year: "2025", event: "TukarIlmu resmi diluncurkan" },
                             { year: "Now", event: "Terus berkembang bareng komunitas mahasiswa" },
                         ].map((item, i) => (
@@ -540,7 +531,7 @@ export default function AboutPage() {
                                 </p>
                             </motion.div>
                         ))}
-                    </div>
+                    </div> */}
                 </motion.div>
             </div>
         </div>
