@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import LayoutWrapper from "@/components/layout-wrapper";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="id">
       <body className={`${inter.className} bg-white text-slate-900 min-h-screen flex flex-col`}>
         <LayoutWrapper>
+          <Analytics/>
           {children}
         </LayoutWrapper>
       </body>

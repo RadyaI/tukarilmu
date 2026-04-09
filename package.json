@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "animate.css": "^4.1.1",
     "firebase": "^12.10.0",
     "framer-motion": "^12.35.1",
