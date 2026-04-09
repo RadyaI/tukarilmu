@@ -10,7 +10,7 @@ const founders = [
         role: "Chief Executive Officer",
         tag: "CEO",
         photo: "/about/foto1.png",
-        ig: "https://instagram.com/haidarhanif.w",
+        ig: "https://instagram.com/haidarhanif_w",
         linkedin: "https://linkedin.com/in/",
         color: "#4f46e5",
         lightBg: "from-indigo-50 to-violet-50",
