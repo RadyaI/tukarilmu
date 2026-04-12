@@ -5,29 +5,30 @@ export type ChatId = string;
 export type MessageId = string;
 
 export interface Chat {
-    id: ChatId;
-    participants: UserId[];
+  participants: UserId[];
 
-    lastMessage?: {
-        text: string;
-        senderId: UserId;
-        createdAt: Timestamp;
-    };
-
-    unreadCount?: Record<UserId, number>;
-
+  lastMessage?: {
+    text: string;
+    senderId: UserId;
     createdAt: Timestamp;
-    updatedAt: Timestamp;
+  };
+
+  unreadCount?: Record<UserId, number>;
+
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 
 export interface Message {
-    id: MessageId;
-    chatId: ChatId;
+  chatId: ChatId;
 
-    senderId: UserId;
-    text: string;
+  senderId: UserId;
+  text: string;
 
-    createdAt: Timestamp;
+  createdAt: Timestamp;
 
-    readBy?: UserId[];
+  readBy?: UserId[];
 }
+
+export type ChatWithId = Chat & { id: ChatId };
+export type MessageWithId = Message & { id: MessageId };
