@@ -12,7 +12,8 @@ import { checkIsAdmin } from "../utils/auth";
 const mainNavItems = [
   { label: "Explore", href: "/explore" },
   { label: "Requests", href: "/requests" },
-  { label: "Tutor", href: "/tutors", loginOnly: true }
+  { label: "Tutor", href: "/tutors", loginOnly: true },
+  { label: "Chats", href: "/chats", loginOnly: true } 
 ];
 
 const userMenuItems = [

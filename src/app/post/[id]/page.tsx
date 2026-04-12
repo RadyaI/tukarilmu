@@ -182,18 +182,20 @@ export default function PostDetail() {
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-8 leading-tight tracking-tight">{post.title}</h1>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-8 border-b border-slate-100 mb-10">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xl shrink-0">
-                {author?.avatar ? <img src={author.avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" /> : author?.name?.[0]?.toUpperCase() || <UserCircle className="w-8 h-8" />}
+            <Link href={`../user/${author?.userId}`}>
+              <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-3">
+                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-lg shrink-0">
+                  {author?.avatar ? <img src={author.avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" /> : author?.name?.[0]?.toUpperCase() || <UserCircle className="w-6 h-6" />}
+                </div>
+                <div>
+                  <p className="font-bold text-slate-900 line-clamp-1">{author?.name || "Kreator"}</p>
+                  <p className={`w-fit p-2 rounded-lg text-xs ${tagStyles[author?.tag || "Mahasiswa"] ?? "bg-fuchsia-50 text-fuchsia-700"} flex items-center gap-1`}>
+                    {author?.role === 'admin' ? <CheckCircle2 className="w-3 h-3 text-indigo-500" /> : null}
+                    {author?.tag || "Mahasiswa"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-bold text-slate-900 text-lg">{author?.name || "Kreator"}</p>
-                <p className={`w-fit p-2 rounded-lg text-xs ${tagStyles[author?.tag || "Mahasiswa"] ?? "bg-fuchsia-50 text-fuchsia-700"} flex items-center gap-1`}>
-                  {author?.role === 'admin' ? <CheckCircle2 className="w-4 h-4 text-indigo-500" /> : null}
-                  {author?.tag || "Mahasiswa"}
-                </p>
-              </div>
-            </div>
+            </Link>
 
             <div className="flex items-center gap-3">
               <button onClick={handleLike} disabled={isLiked} className={`px-4 py-2.5 font-bold text-sm rounded-xl transition-all border flex items-center gap-2 cursor-pointer ${isLiked ? 'bg-red-50 text-red-500 border-red-100' : 'bg-white text-slate-600 border-slate-200 hover:bg-red-50 hover:text-red-500 hover:border-red-200 shadow-sm'}`}>

@@ -199,18 +199,20 @@ export default function VideoDetail() {
 
               <h1 className="text-3xl font-extrabold text-slate-900 mb-6 leading-tight">{video.title}</h1>
 
-              <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-3">
-                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-lg shrink-0">
-                  {author?.avatar ? <img src={author.avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" /> : author?.name?.[0]?.toUpperCase() || <UserCircle className="w-6 h-6" />}
+              <Link href={`../user/${author?.userId}`}>
+                <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-3">
+                  <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-lg shrink-0">
+                    {author?.avatar ? <img src={author.avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" /> : author?.name?.[0]?.toUpperCase() || <UserCircle className="w-6 h-6" />}
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 line-clamp-1">{author?.name || "Kreator"}</p>
+                    <p className={`w-fit p-2 rounded-lg text-xs ${tagStyles[author?.tag || "Mahasiswa"] ?? "bg-fuchsia-50 text-fuchsia-700"} flex items-center gap-1`}>
+                      {author?.role === 'admin' ? <CheckCircle2 className="w-3 h-3 text-indigo-500" /> : null}
+                      {author?.tag || "Mahasiswa"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-bold text-slate-900 line-clamp-1">{author?.name || "Kreator"}</p>
-                  <p className={`w-fit p-2 rounded-lg text-xs ${tagStyles[author?.tag || "Mahasiswa"] ?? "bg-fuchsia-50 text-fuchsia-700"} flex items-center gap-1`}>
-                    {author?.role === 'admin' ? <CheckCircle2 className="w-3 h-3 text-indigo-500" /> : null}
-                    {author?.tag || "Mahasiswa"}
-                  </p>
-                </div>
-              </div>
+              </Link>
 
               <div className="bg-white rounded-[2rem] p-6 sm:p-8 border border-slate-100 shadow-xl shadow-slate-200/40 mt-auto">
                 <p className="text-sm text-slate-500 font-medium mb-2">Harga Akses Materi</p>
