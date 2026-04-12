@@ -266,16 +266,18 @@ export default function AdminManageUsers() {
                     className="hover:bg-slate-50/50 transition-colors group"
                   >
                     <td className="px-6 py-5">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 font-bold text-lg flex items-center justify-center shrink-0 overflow-hidden">
-                          {u.avatar ? <img src={u.avatar} alt="avatar" className="w-full h-full object-cover" /> : u.name?.charAt(0).toUpperCase() || u.email?.charAt(0).toUpperCase()}
+                      <Link href={`/user/${u.userId}`} target="_blank">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 font-bold text-lg flex items-center justify-center shrink-0 overflow-hidden">
+                            {u.avatar ? <img src={u.avatar} alt="avatar" className="w-full h-full object-cover" /> : u.name?.charAt(0).toUpperCase() || u.email?.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-bold text-slate-900">{u.name || "Tanpa Nama"}</p>
+                            <p className="text-sm text-slate-500">{u.email}</p>
+                            <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md mt-1 inline-block">{u.provider === 'google' ? 'Google Auth' : 'Email/Password'}</span>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-bold text-slate-900">{u.name || "Tanpa Nama"}</p>
-                          <p className="text-sm text-slate-500">{u.email}</p>
-                          <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md mt-1 inline-block">{u.provider === 'google' ? 'Google Auth' : 'Email/Password'}</span>
-                        </div>
-                      </div>
+                      </Link>
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex flex-col gap-2 items-start">
