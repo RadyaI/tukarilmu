@@ -9,10 +9,12 @@ import {
   orderBy,
   onSnapshot,
   updateDoc,
+  deleteDoc,
   serverTimestamp,
   getDocs,
   Timestamp,
   arrayUnion,
+  arrayRemove,
   increment,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
@@ -53,20 +55,28 @@ export const sendMessage = async (
   chatId: string,
   senderId: string,
   text: string,
-  participantIds: string[]
+  participantIds: string[],
+  replyTo?: { messageId: string; text: string; senderName: string }
 ): Promise<void> => {
   if (!text.trim()) return;
 
   const messagesRef = collection(db, "chats", chatId, "messages");
   const now = Timestamp.now();
 
-  await addDoc(messagesRef, {
+  const messageData: any = {
     chatId,
     senderId,
     text: text.trim(),
     createdAt: now,
     readBy: [senderId],
-  });
+    deletedFor: [],
+  };
+
+  if (replyTo) {
+    messageData.replyTo = replyTo;
+  }
+
+  await addDoc(messagesRef, messageData);
 
   const chatRef = doc(db, "chats", chatId);
   const unreadUpdate: Record<string, any> = {};
@@ -84,6 +94,36 @@ export const sendMessage = async (
     },
     updatedAt: now,
     ...unreadUpdate,
+  });
+};
+
+// Hapus pesan untuk semua orang (hanya pengirim)
+export const deleteMessageForEveryone = async (
+  chatId: string,
+  messageId: string,
+  senderId: string,
+  currentUserId: string
+): Promise<void> => {
+  if (senderId !== currentUserId) {
+    throw new Error("Hanya pengirim yang bisa menghapus pesan untuk semua.");
+  }
+
+  const msgRef = doc(db, "chats", chatId, "messages", messageId);
+  await updateDoc(msgRef, {
+    text: "",
+    deletedForEveryone: true,
+  });
+};
+
+// Hapus pesan hanya untuk diri sendiri
+export const deleteMessageForMe = async (
+  chatId: string,
+  messageId: string,
+  currentUserId: string
+): Promise<void> => {
+  const msgRef = doc(db, "chats", chatId, "messages", messageId);
+  await updateDoc(msgRef, {
+    deletedFor: arrayUnion(currentUserId),
   });
 };
 

@@ -19,6 +19,12 @@ export interface Chat {
   updatedAt: Timestamp;
 }
 
+export interface ReplyTo {
+  messageId: MessageId;
+  text: string;
+  senderName: string;
+}
+
 export interface Message {
   chatId: ChatId;
 
@@ -28,6 +34,11 @@ export interface Message {
   createdAt: Timestamp;
 
   readBy?: UserId[];
+
+  replyTo?: ReplyTo;
+
+  deletedForEveryone?: boolean;  
+  deletedFor?: UserId[];         
 }
 
 export type ChatWithId = Chat & { id: ChatId };
