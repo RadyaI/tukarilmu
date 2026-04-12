@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, ChevronDown, LogOut, LayoutDashboard, FileText, ShoppingBag, PlusCircle, Video, Menu, X, Shield, LucideGitPullRequestCreateArrow } from "lucide-react";
+import { Search, ChevronDown, LogOut, LayoutDashboard, FileText, ShoppingBag, PlusCircle, Video, Menu, X, Shield, LucideGitPullRequestCreateArrow, User2, LockKeyholeOpen } from "lucide-react";
 import { auth } from "../config/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,6 +18,7 @@ const mainNavItems = [
 const userMenuItems = [
   { label: "Admin Panel", href: "/admin", icon: Shield, adminOnly: true },
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Profil", href: "/dashboard/profile", icon: User2 },
   { label: "My Posts", href: "/my-posts", icon: FileText },
   { label: "My Purchases", href: "/my-purchases", icon: ShoppingBag },
   { label: "My Requests", href: "/my-requests", icon: LucideGitPullRequestCreateArrow },
@@ -30,7 +31,7 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   const pathname = usePathname();
   const router = useRouter();
 
@@ -64,14 +65,14 @@ export default function Navbar() {
   };
 
   const isMenuMobileActive = (path: string) => {
-    return pathname === path 
-      ? "bg-indigo-50 text-indigo-700 font-bold border-l-4 border-indigo-600" 
+    return pathname === path
+      ? "bg-indigo-50 text-indigo-700 font-bold border-l-4 border-indigo-600"
       : "text-slate-600 hover:bg-slate-50 border-l-4 border-transparent";
   };
 
   const isMenuDesktopActive = (path: string) => {
-    return pathname === path 
-      ? "bg-indigo-50 text-indigo-700 font-bold" 
+    return pathname === path
+      ? "bg-indigo-50 text-indigo-700 font-bold"
       : "text-slate-700 hover:bg-slate-50";
   };
 
@@ -89,7 +90,7 @@ export default function Navbar() {
             <Link href="/" className="text-2xl font-extrabold text-indigo-600 tracking-tight cursor-pointer">
               TukarIlmu.
             </Link>
-            
+
             <form onSubmit={handleSearch} className="hidden md:flex relative">
               <input
                 type="text"
@@ -105,11 +106,11 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-6">
             {mainNavItems.map((item: any) => {
               if (item.loginOnly && !user) return null;
-              
+
               return (
-                <Link 
-                  key={item.href} 
-                  href={item.href} 
+                <Link
+                  key={item.href}
+                  href={item.href}
                   className={`${isNavMainActive(item.href)} transition-colors cursor-pointer`}
                 >
                   {item.label}
@@ -147,11 +148,11 @@ export default function Navbar() {
                             if (item.adminOnly && !isAdmin) return null;
                             const isActive = isMenuDesktopActive(item.href);
                             const adminClasses = pathname.startsWith("/admin") ? "bg-indigo-100 text-indigo-800 font-bold" : "text-indigo-700 bg-indigo-50 hover:bg-indigo-100 font-semibold";
-                            
+
                             return (
-                              <Link 
-                                key={item.href} 
-                                href={item.href} 
+                              <Link
+                                key={item.href}
+                                href={item.href}
                                 className={`flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-colors mb-1 cursor-pointer ${item.adminOnly ? adminClasses : isActive}`}
                                 onClick={() => setDropdownOpen(false)}
                               >
@@ -159,8 +160,12 @@ export default function Navbar() {
                               </Link>
                             );
                           })}
-                          
+
                           <div className="h-px bg-slate-100 my-2"></div>
+                          <Link href="/forgot-password" className="flex items-center gap-3 px-4 py-2.5 text-sm text-blue-600 hover:text-blue-700 hover:underline rounded-xl w-full text-left transition-all cursor-pointer">
+                            <LockKeyholeOpen className="w-4 h-4" /> Forgot Password
+                          </Link>
+
                           <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl w-full text-left transition-colors cursor-pointer">
                             <LogOut className="w-4 h-4" /> Logout
                           </button>
@@ -214,16 +219,16 @@ export default function Navbar() {
                   <Search className="absolute left-3.5 top-2.5 w-5 h-5 text-slate-400" />
                 </form>
               )}
-              
+
               <div className="flex flex-col space-y-2">
                 {mainNavItems.map((item: any) => {
                   if (item.loginOnly && !user) return null;
 
                   return (
-                    <Link 
-                      key={item.href} 
-                      href={item.href} 
-                      className={`px-4 py-2.5 font-medium rounded-xl transition-colors cursor-pointer ${pathname === item.href ? "bg-indigo-50 text-indigo-700" : "text-slate-600 hover:bg-slate-50"}`} 
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`px-4 py-2.5 font-medium rounded-xl transition-colors cursor-pointer ${pathname === item.href ? "bg-indigo-50 text-indigo-700" : "text-slate-600 hover:bg-slate-50"}`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {item.label}
@@ -242,7 +247,7 @@ export default function Navbar() {
                       <p className="font-semibold text-slate-900 line-clamp-1">{user.email}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col space-y-1">
                     <Link href="/upload" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${isMenuMobileActive("/upload")}`} onClick={() => setMobileMenuOpen(false)}>
                       <Video className="w-5 h-5" /> Upload
@@ -254,10 +259,10 @@ export default function Navbar() {
                       const isActive = isMenuMobileActive(item.href);
 
                       return (
-                        <Link 
-                          key={item.href} 
-                          href={item.href} 
-                          className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${item.adminOnly ? adminClasses : isActive}`} 
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors cursor-pointer ${item.adminOnly ? adminClasses : isActive}`}
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           <item.icon className="w-5 h-5" /> {item.label}
