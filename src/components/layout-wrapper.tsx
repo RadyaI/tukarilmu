@@ -9,7 +9,8 @@ import toast from "react-hot-toast";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const hideFooter = pathname === "/login" || pathname === "/register";
+  const hideNavbar = pathname === "/login" || pathname === "/register" || pathname.startsWith("/chats/");
 
   useEffect(() => {
     const verifySession = async () => {
@@ -26,9 +27,9 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   return (
     <>
-      {!isAuthPage && <Navbar />}
+      {!hideFooter && <Navbar />}
       <main className="flex-grow">{children}</main>
-      {!isAuthPage && <Footer />}
+      {!hideNavbar && <Footer />}
     </>
   );
 }

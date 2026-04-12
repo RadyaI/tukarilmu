@@ -8,7 +8,6 @@ import {
   MessageCircle,
   Search,
   ArrowLeft,
-  Clock,
   CheckCheck,
 } from "lucide-react";
 import { auth } from "../../config/firebase";
@@ -60,7 +59,6 @@ export default function ChatsPage() {
     if (!currentUser) return;
 
     const unsubChats = subscribeToUserChats(currentUser.uid, async (rawChats) => {
-      // Enrich setiap chat dengan info user lawan bicara
       const enriched = await Promise.all(
         rawChats.map(async (chat) => {
           const otherId = chat.participants.find((p) => p !== currentUser.uid);
@@ -91,13 +89,11 @@ export default function ChatsPage() {
   if (!currentUser && !loading) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-hidden">
-      {/* bg blobs */}
+    <div className="min-h-screen bg-slate-50 relative overflow-hidden pb-24">
       <div className="absolute top-[-10%] left-[-5%] w-[40rem] h-[40rem] bg-indigo-100/40 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-5%] w-[40rem] h-[40rem] bg-violet-100/40 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 relative z-10">
-        {/* Header */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -106,177 +102,181 @@ export default function ChatsPage() {
         >
           <Link
             href="/explore"
-            className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors font-semibold mb-6 group"
+            className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors font-semibold mb-8 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Kembali
           </Link>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
-                <MessageCircle className="w-5 h-5 text-white" />
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-indigo-600 rounded-[1.25rem] flex items-center justify-center shadow-lg shadow-indigo-200 shrink-0">
+                <MessageCircle className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-extrabold text-slate-900 leading-none">
+                <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
                   Pesan
                 </h1>
-                {totalUnread > 0 && (
-                  <p className="text-xs font-bold text-indigo-500 mt-0.5">
+                {totalUnread > 0 ? (
+                  <p className="text-sm font-bold text-indigo-500 mt-1">
                     {totalUnread} pesan belum dibaca
+                  </p>
+                ) : (
+                  <p className="text-sm font-medium text-slate-500 mt-1">
+                    Kelola obrolan dengan kreator lain
                   </p>
                 )}
               </div>
             </div>
+
+            <div className="relative w-full md:w-[22rem] shrink-0">
+              <input
+                type="text"
+                placeholder="Cari percakapan..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-md border border-slate-200 shadow-sm rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all font-medium text-slate-800 placeholder:text-slate-400"
+              />
+              <Search className="absolute left-4 top-4 w-5 h-5 text-slate-400 pointer-events-none" />
+            </div>
           </div>
         </motion.div>
 
-        {/* Search */}
-        <motion.div
+        <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.05 }}
-          className="relative mb-6"
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden"
         >
-          <input
-            type="text"
-            placeholder="Cari percakapan..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3.5 bg-white/80 backdrop-blur-md border border-white shadow-sm rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all font-medium text-slate-800 placeholder:text-slate-400"
-          />
-          <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
-        </motion.div>
-
-        {/* Chat list */}
-        {loading ? (
-          <div className="space-y-3">
-            {[1, 2, 3].map((n) => (
-              <div
-                key={n}
-                className="bg-white/80 rounded-[1.5rem] p-4 flex gap-4 animate-pulse"
-              >
-                <div className="w-14 h-14 rounded-full bg-slate-200 shrink-0" />
-                <div className="flex-1 space-y-2 py-1">
-                  <div className="h-4 bg-slate-200 rounded w-1/3" />
-                  <div className="h-3 bg-slate-200 rounded w-2/3" />
+          {loading ? (
+            <div className="flex flex-col divide-y divide-slate-100">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <div
+                  key={n}
+                  className="p-4 sm:p-6 flex items-center gap-4 animate-pulse bg-white"
+                >
+                  <div className="w-14 h-14 rounded-full bg-slate-200 shrink-0" />
+                  <div className="flex-1 space-y-3 py-1">
+                    <div className="flex justify-between items-center">
+                      <div className="h-4 bg-slate-200 rounded w-1/4" />
+                      <div className="h-3 bg-slate-200 rounded w-16" />
+                    </div>
+                    <div className="h-3 bg-slate-200 rounded w-2/3" />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : filtered.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-20 bg-white/60 backdrop-blur-md rounded-[2.5rem] border border-white shadow-sm"
-          >
-            <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageCircle className="w-10 h-10 text-indigo-300" />
+              ))}
             </div>
-            <h3 className="text-lg font-bold text-slate-800 mb-2">
-              {searchQuery ? "Percakapan Tidak Ditemukan" : "Belum Ada Percakapan"}
-            </h3>
-            <p className="text-slate-500 text-sm max-w-xs mx-auto">
-              {searchQuery
-                ? "Coba kata kunci lain."
-                : "Kunjungi profil kreator dan mulai chat pertamamu!"}
-            </p>
-            {!searchQuery && (
-              <Link
-                href="/explore"
-                className="inline-flex mt-6 px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl text-sm hover:bg-indigo-700 transition-colors"
-              >
-                Explore Kreator
-              </Link>
-            )}
-          </motion.div>
-        ) : (
-          <div className="space-y-2">
-            <AnimatePresence>
-              {filtered.map((chat, i) => {
-                const unread = currentUser
-                  ? chat.unreadCount?.[currentUser.uid] || 0
-                  : 0;
-                const isMyLastMsg =
-                  chat.lastMessage?.senderId === currentUser?.uid;
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-24 bg-white">
+              <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <MessageCircle className="w-12 h-12 text-indigo-300" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-2">
+                {searchQuery ? "Percakapan Tidak Ditemukan" : "Belum Ada Percakapan"}
+              </h3>
+              <p className="text-slate-500 font-medium max-w-sm mx-auto">
+                {searchQuery
+                  ? "Coba gunakan kata kunci lain untuk mencari percakapan."
+                  : "Kunjungi profil kreator di halaman Explore dan mulai chat pertamamu sekarang!"}
+              </p>
+              {!searchQuery && (
+                <Link
+                  href="/explore"
+                  className="inline-flex mt-8 px-8 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
+                >
+                  Explore Kreator
+                </Link>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col divide-y divide-slate-100 bg-white">
+              <AnimatePresence>
+                {filtered.map((chat) => {
+                  const unread = currentUser
+                    ? chat.unreadCount?.[currentUser.uid] || 0
+                    : 0;
+                  const isMyLastMsg =
+                    chat.lastMessage?.senderId === currentUser?.uid;
 
-                return (
-                  <motion.div
-                    key={chat.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ delay: i * 0.04, duration: 0.3 }}
-                  >
-                    <Link href={`/chats/${chat.id}`}>
-                      <div
-                        className={`flex items-center gap-4 p-4 rounded-[1.5rem] transition-all cursor-pointer group ${
-                          unread > 0
-                            ? "bg-indigo-50/80 border border-indigo-100 hover:bg-indigo-100/60"
-                            : "bg-white/80 border border-white hover:bg-slate-50/80"
-                        } backdrop-blur-md shadow-sm hover:shadow-md`}
-                      >
-                        {/* Avatar */}
-                        <div className="relative shrink-0">
-                          <div className="w-14 h-14 rounded-full overflow-hidden bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white font-extrabold text-lg shadow-sm">
-                            {chat.otherUser?.avatar ? (
-                              <img
-                                src={chat.otherUser.avatar}
-                                alt={chat.otherUser.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              chat.otherUser?.name?.[0]?.toUpperCase() || "?"
-                            )}
-                          </div>
-                          {unread > 0 && (
-                            <div className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-indigo-600 text-white text-[10px] font-extrabold rounded-full flex items-center justify-center border-2 border-white">
-                              {unread > 9 ? "9+" : unread}
+                  return (
+                    <motion.div
+                      key={chat.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <Link href={`/chats/${chat.id}`}>
+                        <div
+                          className={`flex items-center gap-4 sm:gap-6 p-4 sm:p-6 transition-all cursor-pointer hover:bg-slate-50 group ${
+                            unread > 0 ? "bg-indigo-50/30" : "bg-white"
+                          }`}
+                        >
+                          <div className="relative shrink-0">
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white font-extrabold text-xl shadow-sm">
+                              {chat.otherUser?.avatar ? (
+                                <img
+                                  src={chat.otherUser.avatar}
+                                  alt={chat.otherUser.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                chat.otherUser?.name?.[0]?.toUpperCase() || "?"
+                              )}
                             </div>
-                          )}
-                        </div>
+                          </div>
 
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-0.5">
-                            <p
-                              className={`font-bold truncate ${
-                                unread > 0
-                                  ? "text-slate-900"
-                                  : "text-slate-800"
-                              }`}
-                            >
-                              {chat.otherUser?.name || "Pengguna"}
-                            </p>
-                            <span className="text-[11px] font-medium text-slate-400 shrink-0 ml-2">
-                              {formatTime(chat.lastMessage?.createdAt || chat.updatedAt)}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            {isMyLastMsg && (
-                              <CheckCheck className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                            )}
-                            <p
-                              className={`text-sm truncate ${
-                                unread > 0
-                                  ? "font-semibold text-slate-700"
-                                  : "text-slate-500"
-                              }`}
-                            >
-                              {chat.lastMessage
-                                ? chat.lastMessage.text
-                                : "Mulai percakapan..."}
-                            </p>
+                          <div className="flex-1 min-w-0 py-1">
+                            <div className="flex items-center justify-between mb-1.5">
+                              <p
+                                className={`font-bold truncate text-base sm:text-md transition-colors group-hover:text-indigo-600 ${
+                                  unread > 0
+                                    ? "text-slate-900"
+                                    : "text-slate-800"
+                                }`}
+                              >
+                                {chat.otherUser?.name || "Pengguna"}
+                              </p>
+                              <span className={`text-[10px] sm:text-xs shrink-0 ml-4 ${
+                                unread > 0 ? "font-bold text-indigo-600" : "font-medium text-slate-400"
+                              }`}>
+                                {formatTime(chat.lastMessage?.createdAt || chat.updatedAt)}
+                              </span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between gap-4">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                {isMyLastMsg && (
+                                  <CheckCheck className="w-4 h-4 text-indigo-400 shrink-0" />
+                                )}
+                                <p
+                                  className={`text-[14px] sm:text-md truncate ${
+                                    unread > 0
+                                      ? "font-bold text-slate-800"
+                                      : "font-medium text-slate-500"
+                                  }`}
+                                >
+                                  {chat.lastMessage
+                                    ? chat.lastMessage.text
+                                    : "Mulai percakapan..."}
+                                </p>
+                              </div>
+                              
+                              {unread > 0 && (
+                                <div className="shrink-0 w-6 h-6 sm:w-7 sm:h-7 bg-indigo-600 text-white text-[11px] sm:text-xs font-extrabold rounded-full flex items-center justify-center shadow-sm">
+                                  {unread > 9 ? "9+" : unread}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </div>
-        )}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          )}
+        </motion.div>
       </div>
     </div>
   );

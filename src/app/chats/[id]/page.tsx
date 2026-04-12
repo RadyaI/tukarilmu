@@ -202,58 +202,56 @@ export default function ChatDetailPage() {
 
   return (
     <div className="h-screen flex flex-col bg-slate-50 relative overflow-hidden">
-      {}
       <div className="absolute top-0 left-[-5%] w-[35rem] h-[35rem] bg-indigo-100/30 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-0 right-[-5%] w-[35rem] h-[35rem] bg-violet-100/30 rounded-full blur-[100px] pointer-events-none" />
 
-      {}
-      <div className="relative z-10 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-4">
-          <Link
-            href="/chats"
-            className="w-9 h-9 rounded-xl bg-slate-50 hover:bg-indigo-50 flex items-center justify-center text-slate-500 hover:text-indigo-600 transition-all shrink-0"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
+      <div className="relative z-10 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm flex-none">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4 flex-1">
+            <Link
+              href="/chats"
+              className="w-10 h-10 rounded-xl bg-slate-50 hover:bg-indigo-50 flex items-center justify-center text-slate-500 hover:text-indigo-600 transition-all shrink-0 cursor-pointer"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
 
-          {loading ? (
-            <div className="flex items-center gap-3 flex-1">
-              <div className="w-10 h-10 rounded-full bg-slate-200 animate-pulse shrink-0" />
-              <div className="space-y-1.5">
-                <div className="w-28 h-3.5 bg-slate-200 rounded animate-pulse" />
-                <div className="w-20 h-3 bg-slate-200 rounded animate-pulse" />
+            {loading ? (
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-slate-200 animate-pulse shrink-0" />
+                <div className="space-y-1.5">
+                  <div className="w-32 h-4 bg-slate-200 rounded animate-pulse" />
+                  <div className="w-24 h-3 bg-slate-200 rounded animate-pulse" />
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              {}
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white font-extrabold text-base shrink-0 shadow-sm">
-                {otherUser?.avatar ? (
-                  <img
-                    src={otherUser.avatar}
-                    alt={otherUser.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  otherUser?.name?.[0]?.toUpperCase() || "?"
-                )}
+            ) : (
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-11 h-11 rounded-full overflow-hidden bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white font-extrabold text-base shrink-0 shadow-sm">
+                  {otherUser?.avatar ? (
+                    <img
+                      src={otherUser.avatar}
+                      alt={otherUser.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    otherUser?.name?.[0]?.toUpperCase() || "?"
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-extrabold text-slate-900 truncate text-base leading-tight">
+                    {otherUser?.name || "Pengguna"}
+                  </p>
+                  <p className="text-sm font-medium text-slate-500 truncate">
+                    {otherUser?.email}
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="font-bold text-slate-900 truncate text-sm leading-tight">
-                  {otherUser?.name || "Pengguna"}
-                </p>
-                <p className="text-xs text-slate-400 truncate">
-                  {otherUser?.email}
-                </p>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
 
-          {}
           {chat && !loading && (
             <Link
               href={`/user/${chat.participants.find((p) => p !== currentUser.uid)}`}
-              className="shrink-0 px-3 py-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-colors"
+              className="hidden sm:flex shrink-0 px-4 py-2 text-sm font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-colors cursor-pointer"
             >
               Lihat Profil
             </Link>
@@ -261,28 +259,27 @@ export default function ChatDetailPage() {
         </div>
       </div>
 
-      {/* ─── Messages ─── */}
-      <div className="flex-1 overflow-y-auto relative z-10">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto relative z-10 w-full flex justify-center">
+        <div className="w-full max-w-4xl px-4 sm:px-6 py-8 space-y-6">
           {loading ? (
             <div className="flex justify-center items-center h-40">
-              <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+              <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
             </div>
           ) : messages.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center justify-center py-20 text-center"
+              className="flex flex-col items-center justify-center py-32 text-center"
             >
-              <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
-                <MessageCircle className="w-8 h-8 text-indigo-300" />
+              <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-6">
+                <MessageCircle className="w-10 h-10 text-indigo-300" />
               </div>
-              <p className="font-bold text-slate-700 mb-1">
-                Mulai percakapan!
-              </p>
-              <p className="text-sm text-slate-400">
-                Kirim pesan pertamamu ke{" "}
-                <span className="font-semibold text-slate-600">
+              <h2 className="text-xl font-extrabold text-slate-900 mb-2">
+                Mulai Percakapan!
+              </h2>
+              <p className="text-base font-medium text-slate-500 max-w-sm">
+                Kirim pesan pertamamu untuk berdiskusi dengan{" "}
+                <span className="font-bold text-slate-700">
                   {otherUser?.name || "kreator ini"}
                 </span>
               </p>
@@ -290,24 +287,19 @@ export default function ChatDetailPage() {
           ) : (
             grouped.map((group) => (
               <div key={group.date}>
-                {/* Date separator */}
-                <div className="flex items-center gap-3 my-4">
-                  <div className="flex-1 h-px bg-slate-200" />
-                  <span className="text-[11px] font-bold text-slate-400 px-3 py-1 bg-white/80 rounded-full border border-slate-100 shadow-sm">
+                <div className="flex items-center justify-center my-8">
+                  <span className="text-[11px] font-bold text-slate-500 px-4 py-1.5 bg-slate-100/80 backdrop-blur-sm rounded-full border border-slate-200 shadow-sm uppercase tracking-wider">
                     {group.date}
                   </span>
-                  <div className="flex-1 h-px bg-slate-200" />
                 </div>
 
-                {/* Messages in group */}
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {group.messages.map((msg, idx) => {
                     const isMe = msg.senderId === currentUser.uid;
                     const isRead = msg.readBy?.includes(
                       chat?.participants.find((p) => p !== currentUser.uid) || ""
                     );
 
-                    // Consecutive message grouping
                     const prevMsg = group.messages[idx - 1];
                     const isFirstInGroup =
                       !prevMsg || prevMsg.senderId !== msg.senderId;
@@ -318,16 +310,15 @@ export default function ChatDetailPage() {
                     return (
                       <motion.div
                         key={msg.id}
-                        initial={{ opacity: 0, y: 6, scale: 0.97 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
-                        className={`flex ${isMe ? "justify-end" : "justify-start"}`}
+                        className={`flex w-full ${isMe ? "justify-end" : "justify-start"}`}
                       >
-                        {/* Avatar untuk pesan orang lain (hanya di pesan terakhir group) */}
                         {!isMe && (
-                          <div className="w-8 mr-2 shrink-0 self-end">
-                            {isLastInGroup ? (
-                              <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white text-xs font-extrabold">
+                          <div className="w-10 mr-3 shrink-0 self-end hidden sm:block">
+                            {isLastInGroup && (
+                              <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white text-sm font-extrabold shadow-sm">
                                 {otherUser?.avatar ? (
                                   <img
                                     src={otherUser.avatar}
@@ -338,57 +329,54 @@ export default function ChatDetailPage() {
                                   otherUser?.name?.[0]?.toUpperCase() || "?"
                                 )}
                               </div>
-                            ) : null}
+                            )}
                           </div>
                         )}
 
-                        <div
-                          className={`max-w-[72%] ${isMe ? "items-end" : "items-start"} flex flex-col`}
-                        >
+                        <div className={`max-w-[85%] md:max-w-[70%] flex flex-col ${isMe ? "items-end" : "items-start"}`}>
                           <div
-                            className={`px-4 py-2.5 shadow-sm ${
+                            className={`px-5 py-3 shadow-sm ${
                               isMe
                                 ? "bg-indigo-600 text-white"
-                                : "bg-white/90 text-slate-800 border border-slate-100"
+                                : "bg-white text-slate-800 border border-slate-100"
                             } ${
                               isMe
                                 ? isFirstInGroup && isLastInGroup
-                                  ? "rounded-[1.2rem] rounded-br-md"
+                                  ? "rounded-2xl rounded-br-sm"
                                   : isFirstInGroup
-                                  ? "rounded-[1.2rem] rounded-br-md"
+                                  ? "rounded-2xl rounded-br-sm"
                                   : isLastInGroup
-                                  ? "rounded-[1.2rem] rounded-tr-md rounded-br-md"
-                                  : "rounded-[1.2rem] rounded-r-md"
+                                  ? "rounded-2xl rounded-tr-sm rounded-br-sm"
+                                  : "rounded-2xl rounded-r-sm"
                                 : isFirstInGroup && isLastInGroup
-                                ? "rounded-[1.2rem] rounded-bl-md"
+                                ? "rounded-2xl rounded-bl-sm"
                                 : isFirstInGroup
-                                ? "rounded-[1.2rem] rounded-bl-md"
+                                ? "rounded-2xl rounded-bl-sm"
                                 : isLastInGroup
-                                ? "rounded-[1.2rem] rounded-tl-md rounded-bl-md"
-                                : "rounded-[1.2rem] rounded-l-md"
+                                ? "rounded-2xl rounded-tl-sm rounded-bl-sm"
+                                : "rounded-2xl rounded-l-sm"
                             }`}
                           >
-                            <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+                            <p className="text-base font-medium leading-relaxed whitespace-pre-wrap break-words">
                               {msg.text}
                             </p>
                           </div>
 
-                          {/* Time + read status (only on last message in group) */}
                           {isLastInGroup && (
                             <div
-                              className={`flex items-center gap-1 mt-1 ${
+                              className={`flex items-center gap-1.5 mt-1.5 px-1 ${
                                 isMe ? "flex-row-reverse" : "flex-row"
                               }`}
                             >
-                              <span className="text-[10px] text-slate-400">
+                              <span className="text-xs font-semibold text-slate-400">
                                 {formatMsgTime(msg.createdAt)}
                               </span>
                               {isMe && (
-                                <span className="text-[10px]">
+                                <span className="text-xs">
                                   {isRead ? (
-                                    <CheckCheck className="w-3.5 h-3.5 text-indigo-500" />
+                                    <CheckCheck className="w-4 h-4 text-indigo-500" />
                                   ) : (
-                                    <Check className="w-3.5 h-3.5 text-slate-400" />
+                                    <Check className="w-4 h-4 text-slate-300" />
                                   )}
                                 </span>
                               )}
@@ -406,25 +394,22 @@ export default function ChatDetailPage() {
         </div>
       </div>
 
-      {/* ─── Input ─── */}
-      <div className="relative z-10 bg-white/80 backdrop-blur-xl border-t border-slate-100 shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-end gap-3">
-            <div className="flex-1 bg-slate-50 border border-slate-200 rounded-[1.3rem] px-4 py-3 focus-within:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
+      <div className="relative z-10 bg-white/90 backdrop-blur-xl border-t border-slate-100 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] flex-none">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex items-end gap-3 sm:gap-4">
+            <div className="flex-1 bg-slate-50 border border-slate-200 rounded-[1.5rem] px-5 py-3.5 sm:py-4 focus-within:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all shadow-inner">
               <textarea
                 ref={inputRef}
                 value={inputText}
                 onChange={(e) => {
                   setInputText(e.target.value);
-                  // Auto resize
                   e.target.style.height = "auto";
-                  e.target.style.height =
-                    Math.min(e.target.scrollHeight, 120) + "px";
+                  e.target.style.height = Math.min(e.target.scrollHeight, 150) + "px";
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="Ketik pesan..."
                 rows={1}
-                className="w-full bg-transparent resize-none focus:outline-none text-slate-800 font-medium text-sm placeholder:text-slate-400 max-h-[120px] overflow-y-auto"
+                className="w-full bg-transparent resize-none focus:outline-none text-slate-800 font-medium text-base placeholder:text-slate-400 max-h-[150px] overflow-y-auto"
                 style={{ lineHeight: "1.5" }}
               />
             </div>
@@ -433,22 +418,22 @@ export default function ChatDetailPage() {
               onClick={handleSend}
               disabled={!inputText.trim() || sending}
               whileTap={{ scale: 0.92 }}
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-md ${
+              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-[1.25rem] flex items-center justify-center shrink-0 transition-all shadow-md cursor-pointer ${
                 inputText.trim() && !sending
-                  ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200 cursor-pointer"
-                  : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                  ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200"
+                  : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
               }`}
             >
               {sending ? (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                <Send className="w-5 h-5" />
+                <Send className="w-6 h-6 sm:w-7 sm:h-7 ml-1" />
               )}
             </motion.button>
           </div>
-
-          <p className="text-[10px] text-slate-400 text-center mt-2">
-            Enter untuk kirim · Shift+Enter untuk baris baru
+          
+          <p className="text-xs font-semibold text-slate-400 text-center mt-3 hidden sm:block">
+            Tekan <kbd className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-500 font-sans border border-slate-200">Enter</kbd> untuk kirim · <kbd className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-500 font-sans border border-slate-200">Shift</kbd> + <kbd className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-500 font-sans border border-slate-200">Enter</kbd> untuk baris baru
           </p>
         </div>
       </div>
