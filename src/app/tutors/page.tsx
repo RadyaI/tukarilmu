@@ -92,218 +92,294 @@ async function fetchTutorStats(userId: string): Promise<TutorStats> {
   return { totalVideos: videosSnap.size, totalPosts: postsSnap.size, totalLikes };
 }
 
-// ─── Card ─────────────────────────────────────────────────────────────────────
+// ─── Modal ────────────────────────────────────────────────────────────────────
 
-function TutorCard({ tutor, currentUserId, onChat, index }: {
+function TutorModal({ tutor, currentUserId, onChat, onClose }: {
   tutor: TutorWithStats;
   currentUserId: string | null;
   onChat: (id: string) => void;
-  index: number;
+  onClose: () => void;
 }) {
   const [avatarError, setAvatarError] = useState(false);
-  const [bioExpanded, setBioExpanded] = useState(false);
   const tag = TAG_CONFIG[tutor.tag];
   const isOwnCard = currentUserId === tutor.userId;
   const { stats } = tutor;
   const totalContent = stats.totalVideos + stats.totalPosts;
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.93, y: 24 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.93, y: 24 }}
+        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Accent bar top */}
+        <div className={`h-1.5 w-full bg-gradient-to-r ${tag?.accentBar ?? "from-slate-300 to-slate-400"}`} />
+
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors z-10"
+        >
+          <X className="w-4 h-4 text-slate-500" />
+        </button>
+
+        <div className="overflow-y-auto max-h-[85vh]">
+          {/* Header */}
+          <div className="flex flex-col items-center text-center px-6 pt-7 pb-5 border-b border-slate-100">
+            <div className="relative mb-4">
+              {tutor.avatar && !avatarError ? (
+                <img src={tutor.avatar} alt={tutor.name} onError={() => setAvatarError(true)}
+                  className="w-24 h-24 rounded-3xl object-cover ring-4 ring-white shadow-lg" />
+              ) : (
+                <div className={`w-24 h-24 rounded-3xl flex items-center justify-center text-white font-black text-2xl ring-4 ring-white shadow-lg bg-gradient-to-br ${tag?.avatarGradient ?? "from-slate-400 to-slate-600"}`}>
+                  {getInitials(tutor.name)}
+                </div>
+              )}
+              <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-400 rounded-full border-2 border-white shadow-sm" />
+            </div>
+            <h2 className="font-black text-slate-900 text-xl leading-snug mb-2">{tutor.name}</h2>
+            {tag && (
+              <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border ${tag.bg} ${tag.color} ${tag.border} mb-1`}>
+                {tag.icon} {tag.label}
+              </span>
+            )}
+            <p className="text-xs font-medium text-slate-400 mt-1">{tutor.email}</p>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 divide-x divide-slate-100 border-b border-slate-100 bg-slate-50/50">
+            <div className="flex flex-col items-center py-3.5 px-2">
+              <div className="flex items-center gap-1 mb-0.5">
+                <Video className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="text-base font-black text-slate-800">{formatNumber(stats.totalVideos)}</span>
+              </div>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Video</span>
+            </div>
+            <div className="flex flex-col items-center py-3.5 px-2">
+              <div className="flex items-center gap-1 mb-0.5">
+                <FileText className="w-3.5 h-3.5 text-violet-400" />
+                <span className="text-base font-black text-slate-800">{formatNumber(stats.totalPosts)}</span>
+              </div>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Post</span>
+            </div>
+            <div className="flex flex-col items-center py-3.5 px-2">
+              <div className="flex items-center gap-1 mb-0.5">
+                <Heart className="w-3.5 h-3.5 text-rose-400" />
+                <span className="text-base font-black text-slate-800">{formatNumber(stats.totalLikes)}</span>
+              </div>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Likes</span>
+            </div>
+          </div>
+
+          {/* Detail info */}
+          <div className="px-6 py-5 space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
+                <GraduationCap className="w-4 h-4 text-indigo-500" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Jurusan</p>
+                <p className={`text-sm font-bold ${tutor.jurusan ? "text-slate-700" : "text-slate-300 italic"}`}>
+                  {tutor.jurusan ?? "Belum diisi"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+                <Building2 className="w-4 h-4 text-violet-500" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Kampus</p>
+                <p className={`text-sm font-bold ${tutor.kampus ? "text-slate-700" : "text-slate-300 italic"}`}>
+                  {tutor.kampus ?? "Belum diisi"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <div className="flex-1 bg-slate-50 rounded-2xl px-3 py-2.5 flex items-center gap-2">
+                <Hash className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <div>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Semester</p>
+                  <p className={`text-sm font-black ${tutor.semester ? "text-slate-700" : "text-slate-300 italic"}`}>
+                    {tutor.semester ? `Sem. ${tutor.semester}` : "—"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex-1 bg-slate-50 rounded-2xl px-3 py-2.5 flex items-center gap-2">
+                <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <div>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Angkatan</p>
+                  <p className={`text-sm font-black ${tutor.angkatan ? "text-slate-700" : "text-slate-300 italic"}`}>
+                    {tutor.angkatan ?? "—"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-violet-50 rounded-2xl px-3 py-2.5 border border-indigo-100/60">
+              <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm">
+                <TrendingUp className="w-4 h-4 text-indigo-500" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-wide">Total Kontribusi</p>
+                <p className="text-sm font-black text-indigo-700">
+                  {totalContent} konten · {formatNumber(stats.totalLikes)} likes
+                </p>
+              </div>
+            </div>
+
+            {tutor.bio ? (
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">Bio</p>
+                <p className="text-sm text-slate-500 font-medium leading-relaxed">{tutor.bio}</p>
+              </div>
+            ) : (
+              <div className="px-3 py-2.5 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-center">
+                <p className="text-xs font-medium text-slate-300 italic">Bio belum diisi</p>
+              </div>
+            )}
+
+            {(tutor.igUrl || tutor.linkedinUrl || tutor.portfolioUrl) && (
+              <div className="flex items-center gap-2 pt-1">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mr-1">Sosmed</p>
+                {tutor.igUrl && (
+                  <a href={tutor.igUrl} target="_blank" rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-xl bg-pink-50 hover:bg-pink-100 flex items-center justify-center transition-colors">
+                    <Instagram className="w-4 h-4 text-pink-500" />
+                  </a>
+                )}
+                {tutor.linkedinUrl && (
+                  <a href={tutor.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 flex items-center justify-center transition-colors">
+                    <Linkedin className="w-4 h-4 text-blue-600" />
+                  </a>
+                )}
+                {tutor.portfolioUrl && (
+                  <a href={tutor.portfolioUrl} target="_blank" rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors">
+                    <Globe className="w-4 h-4 text-slate-500" />
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* CTA */}
+          <div className="px-6 pb-6">
+            {!isOwnCard ? (
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={() => { onChat(tutor.userId); onClose(); }}
+                className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm transition-all cursor-pointer ${tag?.btnClass ?? "bg-indigo-600 text-white"}`}
+              >
+                <MessageCircle className="w-4 h-4" />
+                Mulai Chat
+              </motion.button>
+            ) : (
+              <div className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm bg-slate-50 text-slate-400 border border-slate-100">
+                <Star className="w-4 h-4" />
+                Profil Kamu
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+
+function TutorCard({ tutor, currentUserId, onChat, onOpenModal, index }: {
+  tutor: TutorWithStats;
+  currentUserId: string | null;
+  onChat: (id: string) => void;
+  onOpenModal: (tutor: TutorWithStats) => void;
+  index: number;
+}) {
+  const [avatarError, setAvatarError] = useState(false);
+  const tag = TAG_CONFIG[tutor.tag];
+  const isOwnCard = currentUserId === tutor.userId;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-slate-200/60 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col"
+      onClick={() => onOpenModal(tutor)}
+      className="group relative bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/60 hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-pointer"
     >
       {/* Accent bar */}
       <div className={`h-1.5 w-full bg-gradient-to-r ${tag?.accentBar ?? "from-slate-300 to-slate-400"}`} />
 
-      {/* Avatar section — centered */}
-      <div className="relative px-6 pt-7 pb-5 flex flex-col items-center text-center border-b border-slate-50">
-        <div className="relative mb-4">
+      <div className="p-5 flex items-center gap-4">
+        {/* Avatar */}
+        <div className="relative shrink-0">
           {tutor.avatar && !avatarError ? (
-            <img
-              src={tutor.avatar}
-              alt={tutor.name}
-              onError={() => setAvatarError(true)}
-              className="w-24 h-24 rounded-3xl object-cover ring-4 ring-white shadow-lg"
-            />
+            <img src={tutor.avatar} alt={tutor.name} onError={() => setAvatarError(true)}
+              className="w-16 h-16 rounded-2xl object-cover ring-4 ring-white shadow-md" />
           ) : (
-            <div className={`w-24 h-24 rounded-3xl flex items-center justify-center text-white font-black text-2xl ring-4 ring-white shadow-lg bg-gradient-to-br ${tag?.avatarGradient ?? "from-slate-400 to-slate-600"}`}>
+            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white font-black text-lg ring-4 ring-white shadow-md bg-gradient-to-br ${tag?.avatarGradient ?? "from-slate-400 to-slate-600"}`}>
               {getInitials(tutor.name)}
             </div>
           )}
-          <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-400 rounded-full border-2 border-white shadow-sm" />
+          <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white shadow-sm" />
         </div>
 
-        {/* Nama — full width, no truncate, wrap */}
-        <h3 className="font-black text-slate-900 text-lg leading-snug mb-2 break-words w-full">
-          {tutor.name}
-        </h3>
-
-        {/* Tag badge */}
-        {tag && (
-          <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border ${tag.bg} ${tag.color} ${tag.border} mb-1`}>
-            {tag.icon} {tag.label}
-          </span>
-        )}
-
-        <p className="text-xs font-medium text-slate-400 mt-1 truncate w-full">{tutor.email}</p>
-      </div>
-
-      {/* Stats bar */}
-      <div className="grid grid-cols-3 divide-x divide-slate-100 border-b border-slate-100 bg-slate-50/50">
-        <div className="flex flex-col items-center py-3.5 px-2">
-          <div className="flex items-center gap-1 mb-0.5">
-            <Video className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="text-base font-black text-slate-800">{formatNumber(stats.totalVideos)}</span>
-          </div>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Video</span>
-        </div>
-        <div className="flex flex-col items-center py-3.5 px-2">
-          <div className="flex items-center gap-1 mb-0.5">
-            <FileText className="w-3.5 h-3.5 text-violet-400" />
-            <span className="text-base font-black text-slate-800">{formatNumber(stats.totalPosts)}</span>
-          </div>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Post</span>
-        </div>
-        <div className="flex flex-col items-center py-3.5 px-2">
-          <div className="flex items-center gap-1 mb-0.5">
-            <Heart className="w-3.5 h-3.5 text-rose-400" />
-            <span className="text-base font-black text-slate-800">{formatNumber(stats.totalLikes)}</span>
-          </div>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Likes</span>
-        </div>
-      </div>
-
-      {/* Detail info */}
-      <div className="px-5 py-5 space-y-3 flex-1">
-        {/* Jurusan */}
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
-            <GraduationCap className="w-4 h-4 text-indigo-500" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-0.5">Jurusan</p>
-            <p className={`text-sm font-bold ${tutor.jurusan ? "text-slate-700" : "text-slate-300 italic"}`}>
-              {tutor.jurusan ?? "Belum diisi"}
-            </p>
-          </div>
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-black text-slate-900 text-base leading-snug mb-1 truncate">{tutor.name}</h3>
+          {tag && (
+            <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${tag.bg} ${tag.color} ${tag.border} mb-1.5`}>
+              {tag.icon} {tag.label}
+            </span>
+          )}
+          <p className={`text-xs font-semibold truncate ${tutor.jurusan ? "text-slate-500" : "text-slate-300 italic"}`}>
+            <GraduationCap className="w-3 h-3 inline mr-1 text-indigo-400" />
+            {tutor.jurusan ?? "Jurusan belum diisi"}
+          </p>
+          <p className={`text-xs font-semibold truncate mt-0.5 ${tutor.kampus ? "text-slate-500" : "text-slate-300 italic"}`}>
+            <Building2 className="w-3 h-3 inline mr-1 text-violet-400" />
+            {tutor.kampus ?? "Kampus belum diisi"}
+          </p>
         </div>
 
-        {/* Kampus */}
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
-            <Building2 className="w-4 h-4 text-violet-500" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-0.5">Kampus</p>
-            <p className={`text-sm font-bold ${tutor.kampus ? "text-slate-700" : "text-slate-300 italic"}`}>
-              {tutor.kampus ?? "Belum diisi"}
-            </p>
-          </div>
-        </div>
-
-        {/* Semester & Angkatan */}
-        <div className="flex gap-2">
-          <div className="flex-1 bg-slate-50 rounded-2xl px-3 py-2.5 flex items-center gap-2">
-            <Hash className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <div>
-              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Semester</p>
-              <p className={`text-sm font-black ${tutor.semester ? "text-slate-700" : "text-slate-300 text-xs italic"}`}>
-                {tutor.semester ? `Sem. ${tutor.semester}` : "—"}
-              </p>
+        {/* Tombol Chat — stopPropagation biar ga trigger modal */}
+        <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+          {!isOwnCard ? (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onChat(tutor.userId)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${tag?.btnClass ?? "bg-indigo-600 text-white"}`}
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              Chat
+            </motion.button>
+          ) : (
+            <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-xs bg-slate-50 text-slate-400 border border-slate-100">
+              <Star className="w-3.5 h-3.5" />
+              Kamu
             </div>
-          </div>
-          <div className="flex-1 bg-slate-50 rounded-2xl px-3 py-2.5 flex items-center gap-2">
-            <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <div>
-              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Angkatan</p>
-              <p className={`text-sm font-black ${tutor.angkatan ? "text-slate-700" : "text-slate-300 text-xs italic"}`}>
-                {tutor.angkatan ?? "—"}
-              </p>
-            </div>
-          </div>
+          )}
         </div>
-
-        {/* Total kontribusi summary */}
-        <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-violet-50 rounded-2xl px-3 py-2.5 border border-indigo-100/60">
-          <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm">
-            <TrendingUp className="w-4 h-4 text-indigo-500" />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-wide">Total Kontribusi</p>
-            <p className="text-sm font-black text-indigo-700">
-              {totalContent} konten · {formatNumber(stats.totalLikes)} likes
-            </p>
-          </div>
-        </div>
-
-        {/* Bio */}
-        {tutor.bio ? (
-          <div className="pt-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">Bio</p>
-            <p className={`text-sm text-slate-500 font-medium leading-relaxed ${!bioExpanded ? "line-clamp-2" : ""}`}>
-              {tutor.bio}
-            </p>
-            {tutor.bio.length > 90 && (
-              <button
-                onClick={() => setBioExpanded(!bioExpanded)}
-                className="text-xs font-bold text-indigo-500 hover:text-indigo-700 mt-1 flex items-center gap-0.5 transition-colors"
-              >
-                {bioExpanded ? "Sembunyikan" : "Baca selengkapnya"}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${bioExpanded ? "rotate-180" : ""}`} />
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="px-3 py-2.5 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-center">
-            <p className="text-xs font-medium text-slate-300 italic">Bio belum diisi</p>
-          </div>
-        )}
-
-        {/* Sosmed */}
-        {(tutor.igUrl || tutor.linkedinUrl || tutor.portfolioUrl) && (
-          <div className="flex items-center gap-2 pt-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mr-1">Sosmed</p>
-            {tutor.igUrl && (
-              <a href={tutor.igUrl} target="_blank" rel="noopener noreferrer"
-                className="w-8 h-8 rounded-xl bg-pink-50 hover:bg-pink-100 flex items-center justify-center transition-colors">
-                <Instagram className="w-4 h-4 text-pink-500" />
-              </a>
-            )}
-            {tutor.linkedinUrl && (
-              <a href={tutor.linkedinUrl} target="_blank" rel="noopener noreferrer"
-                className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 flex items-center justify-center transition-colors">
-                <Linkedin className="w-4 h-4 text-blue-600" />
-              </a>
-            )}
-            {tutor.portfolioUrl && (
-              <a href={tutor.portfolioUrl} target="_blank" rel="noopener noreferrer"
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors">
-                <Globe className="w-4 h-4 text-slate-500" />
-              </a>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* CTA */}
-      <div className="px-5 pb-5">
-        {!isOwnCard ? (
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={() => onChat(tutor.userId)}
-            className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm transition-all cursor-pointer ${tag?.btnClass ?? "bg-indigo-600 text-white"}`}
-          >
-            <MessageCircle className="w-4 h-4" />
-            Mulai Chat
-          </motion.button>
-        ) : (
-          <div className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm bg-slate-50 text-slate-400 border border-slate-100">
-            <Star className="w-4 h-4" />
-            Profil Kamu
-          </div>
-        )}
       </div>
     </motion.div>
   );
@@ -320,6 +396,7 @@ export default function TutorsPage() {
   const [activeTag, setActiveTag] = useState("Semua");
   const [activeJurusan, setActiveJurusan] = useState("Semua");
   const [jurusanOpen, setJurusanOpen] = useState(false);
+  const [selectedTutor, setSelectedTutor] = useState<TutorWithStats | null>(null);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => setCurrentUser(user));
@@ -331,21 +408,17 @@ export default function TutorsPage() {
       setLoading(true);
       const all = await getAllUsers();
       const verified = all.filter((u) => VERIFIED_TAGS.includes(u.tag as UserTag));
-
       const withStats = await Promise.all(
         verified.map(async (u) => {
           const stats = await fetchTutorStats(u.userId);
           return { ...u, stats } as TutorWithStats;
         })
       );
-
-      // Sort: Super dulu, lalu by total likes desc
       withStats.sort((a, b) => {
         if (a.tag === "Mahasiswa Super" && b.tag !== "Mahasiswa Super") return -1;
         if (a.tag !== "Mahasiswa Super" && b.tag === "Mahasiswa Super") return 1;
         return b.stats.totalLikes - a.stats.totalLikes;
       });
-
       setTutors(withStats);
       setLoading(false);
     };
@@ -490,26 +563,19 @@ export default function TutorsPage() {
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {Array.from({ length: 8 }).map((_, i) => (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="bg-white rounded-3xl border border-slate-100 overflow-hidden animate-pulse">
                 <div className="h-1.5 bg-slate-200" />
-                <div className="p-6 flex flex-col items-center border-b border-slate-50">
-                  <div className="w-24 h-24 rounded-3xl bg-slate-200 mb-4" />
-                  <div className="h-5 bg-slate-200 rounded-lg w-3/4 mb-2" />
-                  <div className="h-4 bg-slate-200 rounded-lg w-1/2" />
-                </div>
-                <div className="grid grid-cols-3 gap-px bg-slate-100 border-b border-slate-100">
-                  {[0,1,2].map((j) => (
-                    <div key={j} className="bg-white py-3 flex flex-col items-center gap-1">
-                      <div className="h-5 w-8 bg-slate-200 rounded" />
-                      <div className="h-2.5 w-10 bg-slate-200 rounded" />
-                    </div>
-                  ))}
-                </div>
-                <div className="p-5 space-y-3">
-                  {[0,1,2,3].map((j) => <div key={j} className="h-10 bg-slate-100 rounded-2xl" />)}
-                  <div className="h-12 bg-slate-200 rounded-2xl mt-2" />
+                <div className="p-5 flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-slate-200 shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-slate-200 rounded w-3/4" />
+                    <div className="h-3 bg-slate-100 rounded w-1/3" />
+                    <div className="h-3 bg-slate-100 rounded w-2/3" />
+                    <div className="h-3 bg-slate-100 rounded w-1/2" />
+                  </div>
+                  <div className="w-16 h-8 bg-slate-200 rounded-xl shrink-0" />
                 </div>
               </div>
             ))}
@@ -531,14 +597,33 @@ export default function TutorsPage() {
             <p className="text-sm font-bold text-slate-500 mb-6">
               Menampilkan <span className="text-slate-900">{filtered.length}</span> tutor
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {filtered.map((tutor, i) => (
-                <TutorCard key={tutor.id} tutor={tutor} currentUserId={currentUser?.uid ?? null} onChat={handleChat} index={i} />
+                <TutorCard
+                  key={tutor.id}
+                  tutor={tutor}
+                  currentUserId={currentUser?.uid ?? null}
+                  onChat={handleChat}
+                  onOpenModal={setSelectedTutor}
+                  index={i}
+                />
               ))}
             </div>
           </>
         )}
       </div>
+
+      {/* Modal */}
+      <AnimatePresence>
+        {selectedTutor && (
+          <TutorModal
+            tutor={selectedTutor}
+            currentUserId={currentUser?.uid ?? null}
+            onChat={handleChat}
+            onClose={() => setSelectedTutor(null)}
+          />
+        )}
+      </AnimatePresence>
 
       {jurusanOpen && <div className="fixed inset-0 z-10" onClick={() => setJurusanOpen(false)} />}
     </div>
