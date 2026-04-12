@@ -316,7 +316,7 @@ export default function ChatDetailPage() {
                         className={`flex w-full ${isMe ? "justify-end" : "justify-start"}`}
                       >
                         {!isMe && (
-                          <div className="w-10 mr-3 shrink-0 self-end hidden sm:block">
+                          <div className="w-10 mr-3 shrink-0 self-end mb-3 hidden sm:block">
                             {isLastInGroup && (
                               <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-indigo-400 to-violet-600 flex items-center justify-center text-white text-sm font-extrabold shadow-sm">
                                 {otherUser?.avatar ? (
@@ -364,7 +364,7 @@ export default function ChatDetailPage() {
 
                           {isLastInGroup && (
                             <div
-                              className={`flex items-center gap-1.5 mt-1.5 px-1 ${
+                              className={`flex items-center gap-1.5 mb-4 mt-1.5 px-1 ${
                                 isMe ? "flex-row-reverse" : "flex-row"
                               }`}
                             >
