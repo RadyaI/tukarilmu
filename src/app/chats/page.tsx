@@ -9,10 +9,11 @@ import {
   Search,
   ArrowLeft,
   CheckCheck,
+  Trash2,
 } from "lucide-react";
 import { auth } from "../../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { subscribeToUserChats, getUserInfo } from "../../utils/chats";
+import { subscribeToUserChats, getUserInfo, deleteChat } from "../../utils/chats";
 import { Chat } from "../../types/chat";
 
 type EnrichedChat = Chat & {
@@ -43,6 +44,10 @@ export default function ChatsPage() {
   const [chats, setChats] = useState<EnrichedChat[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // --- State untuk fitur hapus ---
+  const [chatToDelete, setChatToDelete] = useState<EnrichedChat | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, (user) => {
@@ -85,6 +90,20 @@ export default function ChatsPage() {
   const totalUnread = chats.reduce((sum, c) => {
     return sum + (currentUser ? c.unreadCount?.[currentUser.uid] || 0 : 0);
   }, 0);
+
+  // --- Handler konfirmasi hapus ---
+  const handleDeleteConfirm = async () => {
+    if (!chatToDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteChat(chatToDelete.id);
+    } catch (err) {
+      console.error("Gagal menghapus chat:", err);
+    } finally {
+      setChatToDelete(null);
+      setIsDeleting(false);
+    }
+  };
 
   if (!currentUser && !loading) return null;
 
@@ -142,7 +161,7 @@ export default function ChatsPage() {
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
@@ -203,11 +222,13 @@ export default function ChatsPage() {
                       key={chat.id}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
+                      exit={{ opacity: 0, height: 0, overflow: "hidden" }}
+                      transition={{ duration: 0.2 }}
+                      className="relative group"
                     >
                       <Link href={`/chats/${chat.id}`}>
                         <div
-                          className={`flex items-center gap-4 sm:gap-6 p-4 sm:p-6 transition-all cursor-pointer hover:bg-slate-50 group ${
+                          className={`flex items-center gap-4 sm:gap-6 p-4 sm:p-6 pr-16 transition-all cursor-pointer hover:bg-slate-50 ${
                             unread > 0 ? "bg-indigo-50/30" : "bg-white"
                           }`}
                         >
@@ -236,13 +257,19 @@ export default function ChatsPage() {
                               >
                                 {chat.otherUser?.name || "Pengguna"}
                               </p>
-                              <span className={`text-[10px] sm:text-xs shrink-0 ml-4 ${
-                                unread > 0 ? "font-bold text-indigo-600" : "font-medium text-slate-400"
-                              }`}>
-                                {formatTime(chat.lastMessage?.createdAt || chat.updatedAt)}
+                              <span
+                                className={`text-[10px] sm:text-xs shrink-0 ml-4 ${
+                                  unread > 0
+                                    ? "font-bold text-indigo-600"
+                                    : "font-medium text-slate-400"
+                                }`}
+                              >
+                                {formatTime(
+                                  chat.lastMessage?.createdAt || chat.updatedAt
+                                )}
                               </span>
                             </div>
-                            
+
                             <div className="flex items-center justify-between gap-4">
                               <div className="flex items-center gap-1.5 min-w-0">
                                 {isMyLastMsg && (
@@ -260,7 +287,7 @@ export default function ChatsPage() {
                                     : "Mulai percakapan..."}
                                 </p>
                               </div>
-                              
+
                               {unread > 0 && (
                                 <div className="shrink-0 w-6 h-6 sm:w-7 sm:h-7 bg-indigo-600 text-white text-[11px] sm:text-xs font-extrabold rounded-full flex items-center justify-center shadow-sm">
                                   {unread > 9 ? "9+" : unread}
@@ -270,6 +297,24 @@ export default function ChatsPage() {
                           </div>
                         </div>
                       </Link>
+
+                      {/* Tombol Hapus */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setChatToDelete(chat);
+                        }}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-xl border border-slate-200 bg-white hover:bg-red-50 hover:border-red-200 transition-all
+                          opacity-0 group-hover:opacity-100
+                          sm:opacity-0 sm:group-hover:opacity-100
+                          opacity-100 sm:opacity-0
+                          z-10"
+                        title="Hapus percakapan"
+                        aria-label="Hapus percakapan"
+                      >
+                        <Trash2 className="w-4 h-4 text-slate-400 hover:text-red-400 transition-colors" />
+                      </button>
                     </motion.div>
                   );
                 })}
@@ -278,6 +323,93 @@ export default function ChatsPage() {
           )}
         </motion.div>
       </div>
+
+      {/* Modal Konfirmasi Hapus */}
+      <AnimatePresence>
+        {chatToDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4"
+            onClick={() => !isDeleting && setChatToDelete(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0, y: 12 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 12 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-3xl shadow-2xl shadow-slate-200/50 p-6 w-full max-w-sm"
+            >
+              {/* Icon */}
+              <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                <Trash2 className="w-7 h-7 text-red-400" />
+              </div>
+
+              {/* Text */}
+              <h3 className="text-lg font-extrabold text-slate-900 text-center mb-2">
+                Hapus Percakapan?
+              </h3>
+              <p className="text-sm text-slate-500 text-center mb-6 leading-relaxed">
+                Chat dengan{" "}
+                <span className="font-bold text-slate-800">
+                  {chatToDelete.otherUser?.name || "pengguna ini"}
+                </span>{" "}
+                akan dihapus permanen dan tidak bisa dikembalikan.
+              </p>
+
+              {/* Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setChatToDelete(null)}
+                  disabled={isDeleting}
+                  className="flex-1 py-3 rounded-2xl border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleDeleteConfirm}
+                  disabled={isDeleting}
+                  className="flex-1 py-3 rounded-2xl bg-red-500 text-sm font-bold text-white hover:bg-red-600 active:scale-[0.98] transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {isDeleting ? (
+                    <>
+                      <svg
+                        className="animate-spin w-4 h-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        />
+                      </svg>
+                      Menghapus...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" />
+                      Hapus
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

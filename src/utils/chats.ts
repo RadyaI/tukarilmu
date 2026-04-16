@@ -213,3 +213,9 @@ export const getUserInfo = async (
     return null;
   }
 };
+
+
+export async function deleteChat(chatId: string): Promise<void> {
+  const chatRef = doc(db, "chats", chatId);
+  await deleteDoc(chatRef);
+}
