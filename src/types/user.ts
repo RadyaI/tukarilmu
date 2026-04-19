@@ -4,6 +4,15 @@ export type UserRole = "mahasiswa" | "admin"
 export type AuthProvider = "google" | "password"
 export type UserTag = "Mahasiswa" | "Admin" | "Mahasiswa Aktif" | "Mahasiswa Super"
 
+export type PortfolioItem = {
+  id: string;
+  title: string;
+  description: string;
+  fileUrl: string;
+  fileType: "image" | "pdf";
+  createdAt: number;
+}
+
 export type User = {
   userId: string
   name: string
@@ -25,4 +34,6 @@ export type User = {
   igUrl?: string
   linkedinUrl?: string
   portfolioUrl?: string
+
+  portfolioItems?: PortfolioItem[]
 }
