@@ -267,8 +267,7 @@ function ExploreContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
 
         {/* Header */}
-        <div className="mb-6 md:mb-10">
-          {/* Desktop */}
+        {/* <div className="mb-6 md:mb-10">
           <div className="hidden md:block text-center">
             <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-3">
               Eksplorasi <span className="text-indigo-500">Materi Kuliah</span>
@@ -277,7 +276,6 @@ function ExploreContent() {
               Temukan video & rangkuman dari mahasiswa lain. Belajar jadi lebih relate dan gampang masuk otak!
             </p>
           </div>
-          {/* Mobile */}
           <div className="block md:hidden">
             <div className="flex items-center gap-3">
               <div className="flex-1">
@@ -296,7 +294,7 @@ function ExploreContent() {
               </span>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* ===== STICKY FILTER BAR ===== */}
         <div className="sticky top-[72px] z-30 mb-8">
