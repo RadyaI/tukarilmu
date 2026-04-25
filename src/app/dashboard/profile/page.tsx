@@ -37,6 +37,7 @@ import { auth, db } from "@/config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { JURUSAN_LIST, Jurusan } from "@/types/jurusan";
+import Swal from "sweetalert2";
 
 const ANGKATAN_LIST = Array.from({ length: 12 }, (_, i) => (new Date().getFullYear() - i).toString());
 const SEMESTER_LIST = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
@@ -163,29 +164,24 @@ export default function ProfilePage() {
 
     const timestamp = Math.round(Date.now() / 1000).toString();
 
-    const paramsToSign: Record<string, string> = { timestamp };
-    if (resourceType === "raw") paramsToSign["resource_type"] = "raw";
-
-    const signatureString =
-      Object.keys(paramsToSign)
-        .sort()
-        .map(k => `${k}=${paramsToSign[k]}`)
-        .join("&") + apiSecret;
-
+    const signatureString = `timestamp=${timestamp}${apiSecret}`;
     const signature = await generateSHA1(signatureString);
 
     const formData = new FormData();
     formData.append("file", file);
     formData.append("api_key", apiKey);
     formData.append("timestamp", timestamp);
-    // formData.append("upload_preset", "ratethings");
     formData.append("signature", signature);
-    if (resourceType === "raw") formData.append("resource_type", "raw");
+
+    if (resourceType === "raw") {
+      formData.append("resource_type", "raw");
+    }
 
     const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
       { method: "POST", body: formData }
     );
+
     const data = await res.json();
     if (!res.ok) throw new Error(data.error?.message || "Gagal upload file ke Cloudinary");
     return data.secure_url as string;
@@ -202,6 +198,15 @@ export default function ProfilePage() {
   const handlePortfolioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.type === "application/pdf") {
+      // Swal.fire({
+      //   title: "Upload PDF lagi bermasalah",
+      //   icon: "error",
+      //   confirmButtonText: "Oke"
+      // })
+      toast.error("Yah upload PDF nya lagi bermasalah deh")
+      return;
+    }
     const allowed = ["application/pdf", "image/jpeg", "image/png", "image/jpg"];
     if (!allowed.includes(file.type)) { toast.error("Format file harus PDF, JPG, atau PNG"); return; }
     if (file.size > 10 * 1024 * 1024) { toast.error("Ukuran file maksimal 10MB"); return; }
@@ -328,14 +333,44 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 relative overflow-hidden">
-      <Toaster position="top-center" />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#ffffff",
+            color: "#1f2937",
+            // border: "1px solid #e5e7eb",
+            borderRadius: "12px",
+            padding: "14px 16px",
+            fontSize: "14px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+          },
 
-      {}
+          success: {
+            iconTheme: {
+              primary: "#22c55e",
+              secondary: "#ffffff",
+            },
+          },
+
+          error: {
+            style: {
+              background: "#CA0B00",
+              color: "#ffffff"
+            },
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#ffffff",
+            },
+          },
+        }}
+      />
+      { }
       <div className="absolute top-[-10%] left-[-5%] w-[45rem] h-[45rem] bg-indigo-100/50 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-15%] right-[-10%] w-[45rem] h-[45rem] bg-violet-100/50 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-[40%] left-[40%] w-[30rem] h-[30rem] bg-fuchsia-50/60 rounded-full blur-[100px] pointer-events-none" />
 
-      {}
+      { }
       <AnimatePresence>
         {showPortfolioModal && (
           <motion.div
@@ -353,7 +388,7 @@ export default function ProfilePage() {
               className="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg flex flex-col"
               style={{ maxHeight: "calc(100dvh - 2rem)" }}
             >
-              {}
+              { }
               <div className="flex items-center justify-between px-7 pt-7 pb-5 shrink-0 border-b border-slate-100">
                 <div>
                   <h3 className="text-xl font-extrabold text-slate-900">Upload Portfolio</h3>
@@ -368,10 +403,10 @@ export default function ProfilePage() {
                 </button>
               </div>
 
-              {}
+              { }
               <div className="overflow-y-auto px-7 py-5 space-y-4 flex-1 overscroll-contain">
 
-                {}
+                { }
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-1.5">
                     Judul <span className="text-red-400">*</span>
@@ -387,7 +422,7 @@ export default function ProfilePage() {
                   <p className="text-xs text-slate-400 text-right mt-1">{portfolioTitle.length}/80</p>
                 </div>
 
-                {}
+                { }
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-1.5">
                     Deskripsi{" "}
@@ -404,14 +439,14 @@ export default function ProfilePage() {
                   <p className="text-xs text-slate-400 text-right mt-1">{portfolioDesc.length}/200</p>
                 </div>
 
-                {}
+                { }
                 <div className="flex items-center gap-3 py-1">
                   <div className="flex-1 h-px bg-slate-100" />
                   <span className="text-[10px] font-extrabold text-slate-400 tracking-widest uppercase">File & / atau Link</span>
                   <div className="flex-1 h-px bg-slate-100" />
                 </div>
 
-                {}
+                { }
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-1.5">
                     File{" "}
@@ -479,7 +514,7 @@ export default function ProfilePage() {
                   )}
                 </div>
 
-                {}
+                { }
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
                     <LinkIcon className="w-3.5 h-3.5 text-emerald-500" />
@@ -503,14 +538,13 @@ export default function ProfilePage() {
                   )}
                 </div>
 
-                {}
-                <div className={`rounded-2xl px-4 py-3 text-xs font-semibold flex items-start gap-2 transition-colors ${
-                  !!portfolioFile && portfolioLink.trim()
-                    ? "bg-emerald-50 text-emerald-700"
-                    : !!portfolioFile || portfolioLink.trim()
+                { }
+                <div className={`rounded-2xl px-4 py-3 text-xs font-semibold flex items-start gap-2 transition-colors ${!!portfolioFile && portfolioLink.trim()
+                  ? "bg-emerald-50 text-emerald-700"
+                  : !!portfolioFile || portfolioLink.trim()
                     ? "bg-indigo-50 text-indigo-700"
                     : "bg-amber-50 text-amber-700"
-                }`}>
+                  }`}>
                   <span className="mt-0.5 shrink-0">
                     {(!!portfolioFile || portfolioLink.trim()) ? "✅" : "⚠️"}
                   </span>
@@ -518,18 +552,18 @@ export default function ProfilePage() {
                     {!!portfolioFile && portfolioLink.trim()
                       ? "Keren! Kamu isi file sekaligus link."
                       : !!portfolioFile
-                      ? "File sudah dipilih. Tambah link jika mau."
-                      : portfolioLink.trim()
-                      ? "Link sudah diisi. Tambah file jika mau."
-                      : "Wajib isi minimal satu: file atau link."}
+                        ? "File sudah dipilih. Tambah link jika mau."
+                        : portfolioLink.trim()
+                          ? "Link sudah diisi. Tambah file jika mau."
+                          : "Wajib isi minimal satu: file atau link."}
                   </span>
                 </div>
 
-                {}
+                { }
                 <div className="h-2" />
               </div>
 
-              {}
+              { }
               <div className="px-7 py-5 shrink-0 border-t border-slate-100">
                 <button
                   type="button"
@@ -557,9 +591,9 @@ export default function ProfilePage() {
         <form onSubmit={handleSave}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            {}
+            { }
             <div className="lg:col-span-1 flex flex-col gap-6">
-              {}
+              { }
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
                 className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-sm border border-white p-8 flex flex-col items-center text-center"
@@ -605,7 +639,7 @@ export default function ProfilePage() {
                 )}
               </motion.div>
 
-              {}
+              { }
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
                 className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-sm border border-white p-6"
@@ -629,9 +663,9 @@ export default function ProfilePage() {
               </motion.div>
             </div>
 
-            {}
+            { }
             <div className="lg:col-span-2 flex flex-col gap-6">
-              {}
+              { }
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
                 className="bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 rounded-[2rem] p-8 text-white relative overflow-hidden"
@@ -650,7 +684,7 @@ export default function ProfilePage() {
                 </div>
               </motion.div>
 
-              {}
+              { }
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
                 className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-sm border border-white p-6 sm:p-8"
@@ -675,7 +709,7 @@ export default function ProfilePage() {
                 </div>
               </motion.div>
 
-              {}
+              { }
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
                 className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-sm border border-white p-6 sm:p-8"
@@ -721,7 +755,7 @@ export default function ProfilePage() {
                 </div>
               </motion.div>
 
-              {}
+              { }
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}
                 className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-sm border border-white p-6 sm:p-8"
@@ -752,7 +786,7 @@ export default function ProfilePage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {portfolioItems.map((item) => (
                       <div key={item.id} className="group relative bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden hover:shadow-md transition-all">
-                        {}
+                        { }
                         <div className="w-full h-32 bg-slate-100 flex items-center justify-center overflow-hidden relative">
                           {item.fileType === "image" && item.fileUrl ? (
                             <img src={item.fileUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -771,7 +805,7 @@ export default function ProfilePage() {
                               <span className="text-xs font-bold text-slate-500">Link Only</span>
                             </div>
                           )}
-                          {}
+                          { }
                           <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/30 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
                             {item.fileUrl && (
                               <a
@@ -808,7 +842,7 @@ export default function ProfilePage() {
                             </button>
                           </div>
                         </div>
-                        {}
+                        { }
                         <div className="p-4">
                           <p className="font-bold text-sm text-slate-800 line-clamp-1">{item.title}</p>
                           {item.description && (
@@ -836,7 +870,7 @@ export default function ProfilePage() {
                 )}
               </motion.div>
 
-              {}
+              { }
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
                 <button
                   type="submit"
