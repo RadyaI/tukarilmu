@@ -297,55 +297,46 @@ function ExploreContent() {
         </div> */}
 
         {/* ===== STICKY FILTER BAR ===== */}
-        <div className="sticky top-[72px] z-30 mb-8">
+        <div className="sticky top-[72px] z-30 mb-8 relative">
           <div className="bg-white/90 backdrop-blur-xl border border-slate-100 rounded-2xl px-4 py-3 shadow-sm">
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-0.5">
-
-              {/* Content type + price chips */}
               {FILTER_CHIPS.map((chip, idx) => (
                 <button
                   key={chip.label}
                   onClick={() => handleChipClick(idx)}
-                  className={`shrink-0 text-xs font-semibold px-4 py-2 rounded-full transition-all cursor-pointer whitespace-nowrap ${
-                    activeChip === idx
+                  className={`shrink-0 text-xs font-semibold px-4 py-2 rounded-full transition-all cursor-pointer whitespace-nowrap ${activeChip === idx
                       ? "bg-indigo-600 text-white shadow-sm shadow-indigo-200"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
+                    }`}
                 >
                   {chip.label}
                 </button>
               ))}
 
-              {/* Divider */}
               <div className="w-px h-5 bg-slate-200 shrink-0 mx-1" />
 
-              {/* Sort chips */}
               {SORT_CHIPS.map(s => (
                 <button
                   key={s.value}
                   onClick={() => handleSortClick(s.value)}
-                  className={`shrink-0 text-xs font-semibold px-4 py-2 rounded-full transition-all cursor-pointer whitespace-nowrap ${
-                    activeSort === s.value
+                  className={`shrink-0 text-xs font-semibold px-4 py-2 rounded-full transition-all cursor-pointer whitespace-nowrap ${activeSort === s.value
                       ? "bg-slate-900 text-white"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
+                    }`}
                 >
                   {s.label}
                 </button>
               ))}
 
-              {/* Divider */}
               <div className="w-px h-5 bg-slate-200 shrink-0 mx-1" />
 
-              {/* Jurusan dropdown as chip */}
               <div className="relative shrink-0">
                 <button
                   onClick={() => setJurusanOpen(!jurusanOpen)}
-                  className={`text-xs font-semibold px-4 py-2 rounded-full transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                    activeJurusan
+                  className={`text-xs font-semibold px-4 py-2 rounded-full transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${activeJurusan
                       ? "bg-violet-600 text-white shadow-sm shadow-violet-200"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
+                    }`}
                 >
                   🎓 {activeJurusan || "Jurusan"}
                   {activeJurusan && (
@@ -355,34 +346,8 @@ function ExploreContent() {
                     >×</span>
                   )}
                 </button>
-                <AnimatePresence>
-                  {jurusanOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 4, scale: 0.97 }}
-                      className="absolute top-full left-0 mt-2 w-56 bg-white border border-slate-100 rounded-2xl shadow-xl overflow-hidden z-50 max-h-64 overflow-y-auto"
-                    >
-                      <div className="p-2">
-                        <button onClick={() => handleJurusanClick("")} className="w-full text-left px-3 py-2 text-xs text-slate-500 hover:bg-slate-50 rounded-xl font-medium">
-                          Semua Jurusan
-                        </button>
-                        {JURUSAN_LIST.map(j => (
-                          <button
-                            key={j}
-                            onClick={() => handleJurusanClick(j)}
-                            className={`w-full text-left px-3 py-2 text-xs rounded-xl font-medium transition-colors cursor-pointer ${activeJurusan === j ? "bg-violet-50 text-violet-700 font-bold" : "hover:bg-slate-50 text-slate-700"}`}
-                          >
-                            {j}
-                          </button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
 
-              {/* Reset */}
               <AnimatePresence>
                 {hasActiveFilters && (
                   <motion.button
@@ -398,6 +363,32 @@ function ExploreContent() {
               </AnimatePresence>
             </div>
           </div>
+
+          <AnimatePresence>
+            {jurusanOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 4, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 4, scale: 0.97 }}
+                className="absolute top-full left-0 mt-2 w-full sm:w-56 bg-white border border-slate-100 rounded-2xl shadow-xl overflow-hidden z-50 max-h-64 overflow-y-auto"
+              >
+                <div className="p-2">
+                  <button onClick={() => handleJurusanClick("")} className="w-full text-left px-3 py-2 text-xs text-slate-500 hover:bg-slate-50 rounded-xl font-medium cursor-pointer">
+                    Semua Jurusan
+                  </button>
+                  {JURUSAN_LIST.map(j => (
+                    <button
+                      key={j}
+                      onClick={() => handleJurusanClick(j)}
+                      className={`w-full text-left px-3 py-2 text-xs rounded-xl font-medium transition-colors cursor-pointer ${activeJurusan === j ? "bg-violet-50 text-violet-700 font-bold" : "hover:bg-slate-50 text-slate-700"}`}
+                    >
+                      {j}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* ===== CONTENT ===== */}
