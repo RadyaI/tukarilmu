@@ -119,7 +119,7 @@ function MessageOptionsModal({
           className="bg-white rounded-3xl rounded-b-3xl sm:rounded-3xl shadow-2xl w-full max-w-sm mx-4 mb-4 sm:mb-0 overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
-          {}
+          { }
           <div className="px-5 pt-5 pb-4 bg-slate-50 border-b border-slate-100">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
               Pesan
@@ -131,9 +131,9 @@ function MessageOptionsModal({
             </p>
           </div>
 
-          {}
+          { }
           <div className="p-3 space-y-1">
-            {}
+            { }
             {!option.msg.deletedForEveryone && (
               <button
                 onClick={onReply}
@@ -149,7 +149,7 @@ function MessageOptionsModal({
               </button>
             )}
 
-            {}
+            { }
             <button
               onClick={onDeleteForMe}
               className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-orange-50 transition-colors text-left group"
@@ -165,7 +165,7 @@ function MessageOptionsModal({
               </div>
             </button>
 
-            {}
+            { }
             {isSender && !option.msg.deletedForEveryone && (
               <button
                 onClick={onDeleteForEveryone}
@@ -184,7 +184,7 @@ function MessageOptionsModal({
             )}
           </div>
 
-          {}
+          { }
           <div className="px-3 pb-3">
             <button
               onClick={onClose}
@@ -303,7 +303,7 @@ export default function ChatDetailPage() {
 
   useEffect(() => {
     if (currentUser && chatId && messages.length > 0) {
-      markMessagesAsRead(chatId, currentUser.uid).catch(() => {});
+      markMessagesAsRead(chatId, currentUser.uid).catch(() => { });
     }
   }, [messages.length, chatId, currentUser]);
 
@@ -399,11 +399,11 @@ export default function ChatDetailPage() {
 
   return (
     <div className="h-screen flex flex-col bg-slate-50 relative overflow-hidden">
-      {}
+      { }
       <div className="absolute top-0 left-[-5%] w-[35rem] h-[35rem] bg-indigo-100/30 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-0 right-[-5%] w-[35rem] h-[35rem] bg-violet-100/30 rounded-full blur-[100px] pointer-events-none" />
 
-      {}
+      { }
       <div className="relative z-10 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm flex-none">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1">
@@ -541,28 +541,24 @@ export default function ChatDetailPage() {
                         )}
 
                         <div
-                          className={`max-w-[85%] md:max-w-[70%] flex flex-col ${
-                            isMe ? "items-end" : "items-start"
-                          }`}
+                          className={`max-w-[85%] md:max-w-[70%] flex flex-col ${isMe ? "items-end" : "items-start"
+                            }`}
                         >
                           {/* Reply preview di dalam bubble */}
                           {msg.replyTo && !isDeleted && (
                             <div
-                              className={`w-full mb-1 px-1 ${
-                                isMe ? "flex justify-end" : "flex justify-start"
-                              }`}
+                              className={`w-full mb-1 px-1 ${isMe ? "flex justify-end" : "flex justify-start"
+                                }`}
                             >
                               <div
-                                className={`flex items-start gap-2 px-3 py-2 rounded-xl max-w-[90%] ${
-                                  isMe
-                                    ? "bg-indigo-500/20 border border-indigo-300/40"
-                                    : "bg-slate-100 border border-slate-200"
-                                }`}
+                                className={`flex items-start gap-2 px-3 py-2 rounded-xl max-w-[90%] ${isMe
+                                  ? "bg-indigo-500/20 border border-indigo-300/40"
+                                  : "bg-slate-100 border border-slate-200"
+                                  }`}
                               >
                                 <CornerUpLeft
-                                  className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${
-                                    isMe ? "text-indigo-v" : "text-slate-400"
-                                  }`}
+                                  className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${isMe ? "text-indigo-v" : "text-slate-400"
+                                    }`}
                                 />
                                 <div className="min-w-0">
                                   {/* <p
@@ -573,9 +569,8 @@ export default function ChatDetailPage() {
                                     {msg.replyTo.senderName}
                                   </p> */}
                                   <p
-                                    className={`text-xs font-medium truncate ${
-                                      isMe ? "text-indigo-700/80" : "text-slate-500"
-                                    }`}
+                                    className={`text-xs font-medium truncate ${isMe ? "text-indigo-700/80" : "text-slate-500"
+                                      }`}
                                   >
                                     {repliedMsg?.deletedForEveryone
                                       ? "Pesan telah dihapus"
@@ -591,29 +586,26 @@ export default function ChatDetailPage() {
                             onClick={() =>
                               !isDeleted && handleClickMessage(msg, isMe)
                             }
-                            className={`px-5 py-3 shadow-sm cursor-pointer transition-opacity active:opacity-70 ${
-                              isDeleted ? "opacity-60 cursor-default" : ""
-                            } ${
-                              isMe
+                            className={`px-5 py-3 shadow-sm cursor-pointer transition-opacity active:opacity-70 ${isDeleted ? "opacity-60 cursor-default" : ""
+                              } ${isMe
                                 ? "bg-indigo-600 text-white"
                                 : "bg-white text-slate-800 border border-slate-100"
-                            } ${
-                              isMe
+                              } ${isMe
                                 ? isFirstInGroup && isLastInGroup
                                   ? "rounded-2xl rounded-br-sm"
                                   : isFirstInGroup
-                                  ? "rounded-2xl rounded-br-sm"
-                                  : isLastInGroup
-                                  ? "rounded-2xl rounded-tr-sm rounded-br-sm"
-                                  : "rounded-2xl rounded-r-sm"
+                                    ? "rounded-2xl rounded-br-sm"
+                                    : isLastInGroup
+                                      ? "rounded-2xl rounded-tr-sm rounded-br-sm"
+                                      : "rounded-2xl rounded-r-sm"
                                 : isFirstInGroup && isLastInGroup
-                                ? "rounded-2xl rounded-bl-sm"
-                                : isFirstInGroup
-                                ? "rounded-2xl rounded-bl-sm"
-                                : isLastInGroup
-                                ? "rounded-2xl rounded-tl-sm rounded-bl-sm"
-                                : "rounded-2xl rounded-l-sm"
-                            }`}
+                                  ? "rounded-2xl rounded-bl-sm"
+                                  : isFirstInGroup
+                                    ? "rounded-2xl rounded-bl-sm"
+                                    : isLastInGroup
+                                      ? "rounded-2xl rounded-tl-sm rounded-bl-sm"
+                                      : "rounded-2xl rounded-l-sm"
+                              }`}
                           >
                             {isDeleted ? (
                               <p className="text-sm font-medium italic opacity-60 flex items-center gap-1.5">
@@ -621,7 +613,7 @@ export default function ChatDetailPage() {
                                 Pesan telah dihapus
                               </p>
                             ) : (
-                              <p className="text-base font-medium leading-relaxed whitespace-pre-wrap break-words">
+                              <p className="text-base font-medium leading-relaxed whitespace-pre-wrap break-all">
                                 {msg.text}
                               </p>
                             )}
@@ -629,9 +621,8 @@ export default function ChatDetailPage() {
 
                           {isLastInGroup && (
                             <div
-                              className={`flex items-center gap-1.5 mb-4 mt-1.5 px-1 ${
-                                isMe ? "flex-row-reverse" : "flex-row"
-                              }`}
+                              className={`flex items-center gap-1.5 mb-4 mt-1.5 px-1 ${isMe ? "flex-row-reverse" : "flex-row"
+                                }`}
                             >
                               <span className="text-xs font-semibold text-slate-400">
                                 {formatMsgTime(msg.createdAt)}
@@ -714,11 +705,10 @@ export default function ChatDetailPage() {
               onClick={handleSend}
               disabled={!inputText.trim() || sending}
               whileTap={{ scale: 0.92 }}
-              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-[1.25rem] flex items-center justify-center shrink-0 transition-all shadow-md cursor-pointer ${
-                inputText.trim() && !sending
-                  ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200"
-                  : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
-              }`}
+              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-[1.25rem] flex items-center justify-center shrink-0 transition-all shadow-md cursor-pointer ${inputText.trim() && !sending
+                ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200"
+                : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
+                }`}
             >
               {sending ? (
                 <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
