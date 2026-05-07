@@ -9,8 +9,8 @@ import toast from "react-hot-toast";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideFooter = pathname === "/login" || pathname === "/register" || pathname === "/kuesioner" || pathname.startsWith("/kuesioner/")
-  const hideNavbar = pathname === "/login" || pathname === "/register" || pathname.startsWith("/chats/") || pathname.startsWith("/kuesioner/")
+  const hideFooter = pathname === "/login" || pathname === "/register" || pathname === "/kuesioner" || pathname === "/kuesioner/result"
+  const hideNavbar = pathname === "/login" || pathname === "/register" || pathname.startsWith("/chats/") || pathname === "/kuesioner/result" || pathname === "/kuesioner" 
 
   useEffect(() => {
     const verifySession = async () => {
