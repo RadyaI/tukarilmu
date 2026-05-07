@@ -30,6 +30,7 @@ export default function Footer() {
               <li><Link href="/about" className="text-slate-500 hover:text-indigo-600 transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="text-slate-500 hover:text-indigo-600 transition-colors">Contact</Link></li>
               <li><Link href="/privacy" className="text-slate-500 hover:text-indigo-600 transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/kuesioner" className="text-slate-500 hover:text-indigo-600 transition-colors">Kuesioner</Link></li>
             </ul>
           </div>
         </div>
