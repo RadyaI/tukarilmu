@@ -15,7 +15,9 @@ import {
   Users, TrendingUp, MessageSquare, Star, ChevronDown,
   ChevronUp, Download, RefreshCw, ShieldAlert, Loader2,
   Sparkles, BookOpen, Zap, DollarSign, Lightbulb,
+  ArrowLeft,
 } from "lucide-react";
+import Link from "next/link";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 interface Response {
@@ -320,9 +322,16 @@ export default function KuesionerResultPage() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
           <div>
-            <div className="inline-flex items-center gap-2 bg-indigo-500/15 border border-indigo-400/25 text-indigo-300 text-xs font-bold px-3 py-1.5 rounded-full mb-3 tracking-widest uppercase">
-              <Sparkles className="w-3.5 h-3.5" /> Admin Only
-            </div>
+            <span className="flex flex-col w-37.5">
+              <Link href="/admin">
+                <div className="inline-flex items-center gap-2 bg-indigo-500/15 border border-indigo-400/25 text-green-300 text-xs font-bold px-3 py-1.5 rounded-full mb-3 tracking-widest uppercase">
+                  <ArrowLeft className="w-3.5 h-3.5" /> Kembali
+                </div>
+              </Link>
+              <div className="inline-flex items-center gap-2 bg-indigo-500/15 border border-indigo-400/25 text-indigo-300 text-xs font-bold px-3 py-1.5 rounded-full mb-3 tracking-widest uppercase">
+                <Sparkles className="w-3.5 h-3.5" /> Admin Only
+              </div>
+            </span>
             <h1 className="text-4xl font-black text-white leading-tight">Hasil Kuesioner</h1>
             <p className="text-white/40 mt-1 font-medium">TukarIlmu MVP Testing Dashboard</p>
           </div>
@@ -375,13 +384,13 @@ export default function KuesionerResultPage() {
               <ChartCard>
                 <SectionHeader emoji="⭐" title="Distribusi Rating Tampilan" />
                 <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={[1,2,3,4,5].map(s => ({ name: `${s} ⭐`, value: data.filter(r => r.kesan_tampilan_skala === s).length }))} margin={{ left: 0, right: 8 }}>
+                  <BarChart data={[1, 2, 3, 4, 5].map(s => ({ name: `${s} ⭐`, value: data.filter(r => r.kesan_tampilan_skala === s).length }))} margin={{ left: 0, right: 8 }}>
                     <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11, fontWeight: 600 }} axisLine={false} tickLine={false} />
                     <YAxis hide />
                     <Tooltip content={<CustomTooltip />} />
                     <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                      {[1,2,3,4,5].map((_, i) => (
-                        <Cell key={i} fill={["#ef4444","#f97316","#f59e0b","#84cc16","#10b981"][i]} />
+                      {[1, 2, 3, 4, 5].map((_, i) => (
+                        <Cell key={i} fill={["#ef4444", "#f97316", "#f59e0b", "#84cc16", "#10b981"][i]} />
                       ))}
                     </Bar>
                   </BarChart>

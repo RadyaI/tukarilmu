@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { 
-  Users, 
-  Film, 
-  FileText, 
-  CreditCard, 
-  HelpCircle, 
+import {
+  Users,
+  Film,
+  FileText,
+  CreditCard,
+  HelpCircle,
   LayoutDashboard,
   ShieldCheck,
   TrendingUp,
@@ -17,7 +17,7 @@ import {
   Mail,
   Chrome
 } from "lucide-react";
-import { 
+import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar, Legend
 } from 'recharts';
@@ -30,7 +30,7 @@ const COLORS = ['#4f46e5', '#c026d3', '#10b981', '#f59e0b', '#ef4444'];
 export default function AdminDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  
+
   const [userStats, setUserStats] = useState({ total: 0, mahasiswa: 0, admin: 0, google: 0, password: 0 });
   const [videoStats, setVideoStats] = useState({ total: 0, free: 0, paid: 0 });
   const [postStats, setPostStats] = useState({ total: 0, free: 0, paid: 0 });
@@ -47,7 +47,7 @@ export default function AdminDashboard() {
         router.push("/login");
         return;
       }
-      
+
       try {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists() && userDoc.data().role === "admin") {
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
       <div className="absolute top-[-10%] left-[-5%] w-[40rem] h-[40rem] bg-indigo-100/60 rounded-full blur-[100px] pointer-events-none z-0"></div>
       <div className="absolute bottom-[-10%] right-[-5%] w-[40rem] h-[40rem] bg-fuchsia-100/60 rounded-full blur-[100px] pointer-events-none z-0"></div>
 
-      <motion.aside 
+      <motion.aside
         initial={{ x: -300 }} animate={{ x: 0 }}
         className="w-72 bg-white/80 backdrop-blur-xl border-r border-slate-100 flex flex-col z-20 relative"
       >
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
           </Link>
           <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-wider">Admin Workspace</p>
         </div>
-        
+
         <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
           <Link href="/admin" className="flex items-center gap-3 px-4 py-3.5 bg-indigo-50 text-indigo-700 font-bold rounded-2xl transition-colors">
             <LayoutDashboard className="w-5 h-5" /> Dashboard
@@ -196,6 +196,7 @@ export default function AdminDashboard() {
         <header className="mb-10">
           <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Platform Overview</h1>
           <p className="text-slate-500">Statistik real-time dari aktivitas seluruh pengguna TukarIlmu.</p>
+          <Link href="/kuesioner/result"><button className="text-blue-500 underline mt-3">View Kuesioner Result</button></Link>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
@@ -253,14 +254,14 @@ export default function AdminDashboard() {
                 <AreaChart data={userChartData}>
                   <defs>
                     <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#4f46e5" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                  <Tooltip contentStyle={{borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <Tooltip contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
                   <Area type="monotone" dataKey="total" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -273,9 +274,9 @@ export default function AdminDashboard() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={txChartData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                  <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
                   <Bar dataKey="total" fill="#10b981" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -291,14 +292,14 @@ export default function AdminDashboard() {
                 <AreaChart data={contentChartData}>
                   <defs>
                     <linearGradient id="colorContent" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#c026d3" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#c026d3" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#c026d3" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#c026d3" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                  <Tooltip contentStyle={{borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <Tooltip contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
                   <Area type="monotone" dataKey="total" stroke="#c026d3" strokeWidth={3} fillOpacity={1} fill="url(#colorContent)" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -316,8 +317,8 @@ export default function AdminDashboard() {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}} />
-                  <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{fontSize: '12px', fontWeight: 600, color: '#64748b'}} />
+                  <Tooltip contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px', fontWeight: 600, color: '#64748b' }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
