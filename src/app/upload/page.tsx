@@ -189,6 +189,7 @@ function UploadFormContent() {
           course,
           jurusan,
           userId: user.uid,
+          authorName: user.displayName,
           price: Number(price),
           videoUrl,
           ...(uploadedThumbnailUrl && { thumbnailUrl: uploadedThumbnailUrl }),
@@ -208,6 +209,7 @@ function UploadFormContent() {
           course,
           jurusan,
           userId: user.uid,
+          authorName: user.displayName,
           price: Number(price),
           content: postContent,
           ...(uploadedThumbnailUrl && { thumbnailUrl: uploadedThumbnailUrl }),
@@ -359,11 +361,10 @@ function UploadFormContent() {
                   value={price}
                   onChange={(e) => setPrice(Number(e.target.value))}
                   disabled={!!requestId}
-                  className={`w-full px-4 py-3.5 border rounded-2xl focus:outline-none transition-all font-medium ${
-                    requestId
+                  className={`w-full px-4 py-3.5 border rounded-2xl focus:outline-none transition-all font-medium ${requestId
                       ? "bg-slate-100 border-slate-200 cursor-not-allowed text-slate-500 font-bold"
                       : "bg-slate-50 border-slate-200 focus:ring-2 focus:ring-indigo-500/50 text-slate-800"
-                  }`}
+                    }`}
                   placeholder="0 untuk gratis"
                 />
                 <p className="text-xs text-slate-500 mt-2">Isi 0 jika kamu ingin membagikan materi ini secara gratis.</p>

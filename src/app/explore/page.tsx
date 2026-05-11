@@ -413,7 +413,7 @@ function ExploreContent() {
             </div>
             <h2 className="text-xl font-bold text-slate-900 mb-2">Materi Tidak Ditemukan</h2>
             <p className="text-slate-400 mb-7 max-w-sm mx-auto text-sm">Belum ada yang bahas nih. Mau request ke kreator lain?</p>
-            <Link href="/create-request" className="inline-flex px-7 py-3 bg-indigo-600 text-white font-bold rounded-full hover:bg-indigo-700 transition-all items-center gap-2 text-sm">
+            <Link href="/requests/create" className="inline-flex px-7 py-3 bg-indigo-600 text-white font-bold rounded-full hover:bg-indigo-700 transition-all items-center gap-2 text-sm">
               <PlusCircle className="w-4 h-4" /> Buat Request Materi
             </Link>
           </motion.div>

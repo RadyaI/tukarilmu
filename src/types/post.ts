@@ -7,6 +7,7 @@ export type Post = {
   course: string
   jurusan: Jurusan | string
   userId: string
+  authorName?: string,
   price: number
   content: string
   likes: number

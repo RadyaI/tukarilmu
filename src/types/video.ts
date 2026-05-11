@@ -7,6 +7,7 @@ export type Video = {
   course: string
   jurusan: Jurusan | string
   userId: string
+  authorName?: string
   price: number
   videoUrl: string
   likes: number
