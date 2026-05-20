@@ -151,9 +151,9 @@ export default function KuesionerPage() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
-      if (!u) { router.replace("/login"); return; }
-      setUser(u);
-      const snap = await getDocs(query(collection(db, "kuesioner_tukarilmu"), where("email", "==", u.email)));
+      // if (!u) { router.replace("/login"); return; }
+      // setUser(u);
+      // const snap = await getDocs(query(collection(db, "kuesioner_tukarilmu"), where("email", "==", u.email)));
       // if (!snap.empty) setAlreadySubmitted(true);
       setLoading(false);
     });
@@ -211,8 +211,8 @@ export default function KuesionerPage() {
     setSubmitting(true);
     try {
       await addDoc(collection(db, "kuesioner_tukarilmu"), {
-        email: user.email,
-        uid: user.uid,
+        email: user?.email ?? "anonymous",
+        uid: user?.uid ?? "guest",
         ...form,
         submitted_at: serverTimestamp(),
       });
@@ -286,7 +286,7 @@ export default function KuesionerPage() {
         <button onClick={() => setCurrentSection(1)} className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-bold py-3.5 rounded-full text-base hover:shadow-[0_0_28px_rgba(99,102,241,0.45)] hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
           Gas! 🔥
         </button>
-        <p className="text-white/25 text-xs mt-4">Login sebagai: {user?.email}</p>
+        <p className="text-white/25 text-xs mt-4">Login sebagai: {user?.email || "Guest"}</p>
       </motion.div>
     </div>
   );
@@ -319,7 +319,7 @@ export default function KuesionerPage() {
               className={`flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full border transition-all
                 ${i + 1 === currentSection ? "bg-indigo-500/20 border-indigo-400/50 text-indigo-300"
                   : i + 1 < currentSection ? "bg-white/8 border-white/15 text-white/50"
-                  : "bg-transparent border-white/10 text-white/25"}`}
+                    : "bg-transparent border-white/10 text-white/25"}`}
             >
               {i + 1 < currentSection && <CheckCircle2 className="w-3 h-3" />}
               {s.emoji} {s.label}
