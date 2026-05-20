@@ -154,7 +154,7 @@ export default function KuesionerPage() {
       if (!u) { router.replace("/login"); return; }
       setUser(u);
       const snap = await getDocs(query(collection(db, "kuesioner_tukarilmu"), where("email", "==", u.email)));
-      if (!snap.empty) setAlreadySubmitted(true);
+      // if (!snap.empty) setAlreadySubmitted(true);
       setLoading(false);
     });
     return () => unsub();
