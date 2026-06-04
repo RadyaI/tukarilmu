@@ -6,11 +6,12 @@ import Navbar from "./navbar";
 import Footer from "./footer";
 import { checkAutoLogout } from "../utils/auth";
 import toast from "react-hot-toast";
+import ChatAI from "@/components/ChatAI";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const hideFooter = pathname === "/login" || pathname === "/register" || pathname === "/kuesioner" || pathname === "/kuesioner/result"
-  const hideNavbar = pathname === "/login" || pathname === "/register" || pathname.startsWith("/chats/") || pathname === "/kuesioner/result" || pathname === "/kuesioner" 
+  const hideNavbar = pathname === "/login" || pathname === "/register" || pathname.startsWith("/chats/") || pathname === "/kuesioner/result" || pathname === "/kuesioner"
 
   useEffect(() => {
     const verifySession = async () => {
@@ -29,6 +30,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     <>
       {!hideFooter && <Navbar />}
       <main className="flex-grow">{children}</main>
+      <ChatAI />
       {!hideNavbar && <Footer />}
     </>
   );
