@@ -166,8 +166,8 @@ export default function ChatAI() {
         }}
       />
 
-      {/* ── Floating wrapper (always top z-index) ── */}
-      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3">
+      {/* ── Floating wrapper — pointer-events-none biar ga nutup UI lain ── */}
+      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3 pointer-events-none">
         {/* ── Chat Panel ── */}
         <div
           className={`
@@ -176,9 +176,10 @@ export default function ChatAI() {
             transition-all duration-300 ease-out origin-bottom-right
             ${open
               ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
-              : "opacity-0 scale-95 translate-y-4 pointer-events-none"
+              : "opacity-0 scale-95 translate-y-4 pointer-events-none select-none"
             }
           `}
+          aria-hidden={!open}
           style={{
             background: "linear-gradient(160deg, #f8f6ff 0%, #fdf4ff 100%)",
             boxShadow: "0 20px 60px -10px rgba(124, 58, 237, 0.25), 0 8px 20px -5px rgba(0,0,0,0.15)",
@@ -278,6 +279,7 @@ export default function ChatAI() {
         <button
           onClick={() => setOpen((v) => !v)}
           className="
+            pointer-events-auto
             w-14 h-14 rounded-full flex items-center justify-center
             shadow-lg hover:shadow-xl
             transition-all duration-200 active:scale-95 hover:scale-105
