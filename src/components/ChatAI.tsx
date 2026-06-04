@@ -111,7 +111,7 @@ export default function ChatAI() {
         setMessages([
           {
             role: "model",
-            text: "Halo! 👋 Ada yang bisa aku bantu seputar website ini?",
+            text: "Halo! 👋 Ada yang bisa aku bantu seputar website Tukar Ilmu?",
           },
         ]);
       }
