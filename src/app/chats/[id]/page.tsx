@@ -246,19 +246,33 @@ export default function ChatDetailPage() {
     const init = async () => {
       try {
         const parts = chatId.split("-");
+        let targetUserId = chatId;
+
+        if (parts.length > 1) {
+          targetUserId = parts.includes(currentUser.uid)
+            ? parts.find((id) => id !== currentUser.uid) || chatId
+            : parts.filter((_, i) => i !== 0).join("-");
+        }
+
         await getOrCreateChat(
           currentUser.uid,
-          parts.filter((_, i) => i !== 0).join("-")
+          targetUserId
         );
 
-        const { doc: firestoreDoc, getDoc } = await import("firebase/firestore");
+        const { doc: firestoreDoc, getDoc, setDoc, serverTimestamp } = await import("firebase/firestore");
         const { db } = await import("../../../config/firebase");
+        
         const chatRef = firestoreDoc(db, "chats", chatId);
-        const chatSnap = await getDoc(chatRef);
+        let chatSnap = await getDoc(chatRef);
 
         if (!chatSnap.exists()) {
-          router.push("/chats");
-          return;
+          await setDoc(chatRef, {
+            participants: [currentUser.uid, targetUserId],
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          });
+          
+          chatSnap = await getDoc(chatRef);
         }
 
         const chatData = {
